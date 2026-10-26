@@ -123,6 +123,12 @@ WINE_PRESETS: Dict[str, Dict[str, Any]] = {
         "temp_min": 15.0, "temp_max": 18.0, "hum_min": 65.0, "hum_max": 75.0, "lum_min": 0.0, "lum_max": 20.0,
         "def_temp": 16.4, "def_hum": 69.0, "def_lum": 10.0,
     },
+    "fortificado": {
+        "name": "🏺 Vinho do Porto & Madeira", "style": "fortificado", "lcd": "PORTO",
+        "description": "Estágio oxidativo controlado para vinhos fortificados de guarda secular.",
+        "temp_min": 14.0, "temp_max": 18.0, "hum_min": 60.0, "hum_max": 75.0, "lum_min": 0.0, "lum_max": 20.0,
+        "def_temp": 16.0, "def_hum": 68.0, "def_lum": 10.0,
+    },
     "sobremesa": {
         "name": "🍯 Colheita Tardia (Sauternes)", "style": "sobremesa", "lcd": "DOCE",
         "description": "Preservação de vinhos nobres de sobremesa: equilíbrio entre doçura botritizada e acidez.",
