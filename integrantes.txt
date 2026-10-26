@@ -6,7 +6,10 @@ Aluna: Nicolly Vilela
 Curso: Engenharia de Software / Edge Computing & Computer Systems
 Projeto: Monitoramento Inteligente de Cavas Subterrâneas e Terroirs (Vinheria Agnello)
 
-Links do Projeto:
+Links Oficiais do Projeto:
+- Repositório GitHub: https://github.com/ninixzzs/vinheria-agnello-cp5-nicolly-vilela
 - Simulador Wokwi (ESP32 + Sensores + LCD 16x2): https://wokwi.com/projects/478106752109243393
-- Dashboard Interativo: dashboard.html
+- Deploy em Nuvem (Render): https://checkpoint5-vinheria-fiware-esp32-1.onrender.com/
+- Portal Barril 3D Interativo: index.html
+- Dashboard SCADA Completo: dashboard.html
 ===================================================================
