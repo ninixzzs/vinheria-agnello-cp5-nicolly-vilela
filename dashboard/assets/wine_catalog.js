@@ -1,6 +1,6 @@
 /**
  * Catálogo Canônico de Lotes da Cava (12), Estilos de Vinho (8), Terroirs Globais (12)
- * e Cliente de Sincronização Direta em Tempo Real com o Supabase Cloud — Vinheria Agnello
+ * e Cliente Bidirecional em Tempo Real com o Supabase Cloud — Vinheria Agnello
  */
 (function () {
   const SUPABASE_URL = "https://slqozouuqzxwmfswyroo.supabase.co";
@@ -15,10 +15,10 @@
     { code: "LOTE-PT-PORTO-06", winery: "Taylor's & Quinta Crasto", wine: "Vintage Port Reserva", style: "porto", styleLabel: "🏺 Porto", terroirId: "pt_crasto", country: "Portugal", flag: "🇵🇹", region: "Vale do Douro", vintage: 2016, barrel: "Tonel de Carvalho (24m)", soil: "Xisto Pré-Cambriano", apogee: "2026–2060", baseT: 16.4, baseH: 69.0, baseL: 10.0, liveT: 16.4, liveH: 69.0, liveL: 10.0, temp: [15.0, 18.0], hum: [65.0, 75.0], lum: 20.0 },
     { code: "LOTE-DE-PRUM-07", winery: "Château d'Yquem & Prüm", wine: "Sauternes Colheita Tardia", style: "sobremesa", styleLabel: "🍯 Colheita", terroirId: "de_prum", country: "Alemanha / França", flag: "🇩🇪", region: "Mosel / Sauternes", vintage: 2019, barrel: "Barricas Novas (30m)", soil: "Ardósia Azul & Argila", apogee: "2025–2055", baseT: 10.4, baseH: 72.0, baseL: 6.0, liveT: 10.4, liveH: 72.0, liveL: 6.0, temp: [9.0, 12.0], hum: [65.0, 78.0], lum: 12.0 },
     { code: "LOTE-IT-GRAVNER-08", winery: "Josko Gravner", wine: "Ribolla Gialla Ânfora", style: "laranja", styleLabel: "🍊 Laranja", terroirId: "es_vega", country: "Espanha / Itália", flag: "🇪🇸", region: "Ribera / Friuli", vintage: 2017, barrel: "Ânforas Georgianas Qvevri", soil: "Marga Eocênica", apogee: "2024–2038", baseT: 12.6, baseH: 66.0, baseL: 8.0, liveT: 12.6, liveH: 66.0, liveL: 8.0, temp: [11.0, 14.0], hum: [60.0, 72.0], lum: 15.0 },
-    { code: "LOTE-ES-VEGA-09", winery: "Vega Sicilia", wine: "Único Gran Reserva", style: "tinto", styleLabel: "🍷 Tinto", terroirId: "za_kanonkop", country: "África do Sul / Espanha", flag: "🇿🇦", region: "Stellenbosch / Duero", vintage: 2014, barrel: "Carvalho Americano & Francês", soil: "Aluvial & Calcário", apogee: "2025–2046", baseT: 19.8, baseH: 57.0, baseL: 16.0, liveT: 19.8, liveH: 57.0, liveL: 16.0, temp: [14.0, 18.0], hum: [60.0, 75.0], lum: 25.0 },
-    { code: "LOTE-NZ-CLOUDY-10", winery: "Cloudy Bay", wine: "Te Koko Sauvignon Blanc", style: "branco", styleLabel: "🥂 Branco", terroirId: "nz_cloudy", country: "Nova Zelândia", flag: "🇳🇿", region: "Marlborough", vintage: 2021, barrel: "Foudres Franceses", soil: "Cascalho Fluvial", apogee: "2024–2032", baseT: 13.8, baseH: 58.0, baseL: 14.0, liveT: 13.8, liveH: 58.0, liveL: 14.0, temp: [8.0, 12.0], hum: [60.0, 75.0], lum: 15.0 },
-    { code: "LOTE-BR-MIOLO-11", winery: "Vinícola Miolo", wine: "Cuvée Giuseppe Rosé", style: "rose", styleLabel: "🌸 Rosé", terroirId: "br_miolo", country: "Brasil", flag: "🇧🇷", region: "Vale dos Vinhedos (RS)", vintage: 2022, barrel: "Inox Climatizado (6m)", soil: "Basáltico-Argiloso", apogee: "2024–2028", baseT: 15.1, baseH: 56.0, baseL: 15.0, liveT: 15.1, liveH: 56.0, liveL: 15.0, temp: [10.0, 13.0], hum: [60.0, 75.0], lum: 12.0 },
-    { code: "LOTE-AR-CATENA-12", winery: "Catena Zapata", wine: "Nicolás Catena Brut Nature", style: "espumante", styleLabel: "🍾 Brut", terroirId: "ar_catena", country: "Argentina", flag: "🇦🇷", region: "Gualtallary, Mendoza", vintage: 2018, barrel: "Pupitres Andinos (24m)", soil: "Aluvial Andino", apogee: "2025–2036", baseT: 14.8, baseH: 47.0, baseL: 24.0, liveT: 14.8, liveH: 47.0, liveL: 24.0, temp: [6.0, 9.0], hum: [65.0, 80.0], lum: 10.0 }
+    { code: "LOTE-ES-VEGA-09", winery: "Vega Sicilia", wine: "Único Gran Reserva", style: "tinto", styleLabel: "🍷 Tinto", terroirId: "za_kanonkop", country: "África do Sul / Espanha", flag: "🇿🇦", region: "Stellenbosch / Duero", vintage: 2014, barrel: "Carvalho Americano & Francês", soil: "Aluvial & Calcário", apogee: "2025–2046", baseT: 16.0, baseH: 68.0, baseL: 10.0, liveT: 16.0, liveH: 68.0, liveL: 10.0, temp: [14.0, 18.0], hum: [60.0, 75.0], lum: 25.0 },
+    { code: "LOTE-NZ-CLOUDY-10", winery: "Cloudy Bay", wine: "Te Koko Sauvignon Blanc", style: "branco", styleLabel: "🥂 Branco", terroirId: "nz_cloudy", country: "Nova Zelândia", flag: "🇳🇿", region: "Marlborough", vintage: 2021, barrel: "Foudres Franceses", soil: "Cascalho Fluvial", apogee: "2024–2032", baseT: 10.2, baseH: 68.0, baseL: 8.0, liveT: 10.2, liveH: 68.0, liveL: 8.0, temp: [8.0, 12.0], hum: [60.0, 75.0], lum: 15.0 },
+    { code: "LOTE-BR-MIOLO-11", winery: "Vinícola Miolo", wine: "Cuvée Giuseppe Rosé", style: "rose", styleLabel: "🌸 Rosé", terroirId: "br_miolo", country: "Brasil", flag: "🇧🇷", region: "Vale dos Vinhedos (RS)", vintage: 2022, barrel: "Inox Climatizado (6m)", soil: "Basáltico-Argiloso", apogee: "2024–2028", baseT: 11.4, baseH: 67.0, baseL: 7.0, liveT: 11.4, liveH: 67.0, liveL: 7.0, temp: [10.0, 13.0], hum: [60.0, 75.0], lum: 12.0 },
+    { code: "LOTE-AR-CATENA-12", winery: "Catena Zapata", wine: "Nicolás Catena Brut Nature", style: "espumante", styleLabel: "🍾 Brut", terroirId: "ar_catena", country: "Argentina", flag: "🇦🇷", region: "Gualtallary, Mendoza", vintage: 2018, barrel: "Pupitres Andinos (24m)", soil: "Aluvial Andino", apogee: "2025–2036", baseT: 7.6, baseH: 72.0, baseL: 5.0, liveT: 7.6, liveH: 72.0, liveL: 5.0, temp: [6.0, 9.0], hum: [65.0, 80.0], lum: 10.0 }
   ];
 
   const PRESETS = {
@@ -41,16 +41,17 @@
     us_opus: { id: "us_opus", name: "Opus One", reg: "Napa Valley", flag: "🇺🇸", country: "EUA", style: "pinot", lotCode: "LOTE-FR-DRC-05", lat: 38.4367, lon: -122.4017, baseT: 13.4, baseH: 70, baseL: 8, t: 13.4, h: 70, l: 8 },
     de_prum: { id: "de_prum", name: "Joh. Jos. Prüm", reg: "Vale do Mosel", flag: "🇩🇪", country: "Alemanha", style: "sobremesa", lotCode: "LOTE-DE-PRUM-07", lat: 49.9189, lon: 7.0394, baseT: 10.4, baseH: 72, baseL: 6, t: 10.4, h: 72, l: 6 },
     es_vega: { id: "es_vega", name: "Vega Sicilia", reg: "Ribera del Duero", flag: "🇪🇸", country: "Espanha", style: "laranja", lotCode: "LOTE-IT-GRAVNER-08", lat: 41.6322, lon: -4.2981, baseT: 12.6, baseH: 66, baseL: 8, t: 12.6, h: 66, l: 8 },
-    nz_cloudy: { id: "nz_cloudy", name: "Cloudy Bay", reg: "Marlborough", flag: "🇳🇿", country: "Nova Zelândia", style: "branco", lotCode: "LOTE-NZ-CLOUDY-10", lat: -41.4914, lon: 173.9619, baseT: 13.8, baseH: 62, baseL: 11, t: 13.8, h: 62, l: 11 },
-    za_kanonkop: { id: "za_kanonkop", name: "Kanonkop Estate", reg: "Stellenbosch", flag: "🇿🇦", country: "África do Sul", style: "tinto", lotCode: "LOTE-ES-VEGA-09", lat: -33.8569, lon: 18.8669, baseT: 17.8, baseH: 61, baseL: 14, t: 17.8, h: 61, l: 14 },
-    br_miolo: { id: "br_miolo", name: "Vinícola Miolo", reg: "Serra Gaúcha", flag: "🇧🇷", country: "Brasil", style: "rose", lotCode: "LOTE-BR-MIOLO-11", lat: -29.1864, lon: -51.5567, baseT: 15.1, baseH: 56, baseL: 15, t: 15.1, h: 56, l: 15 },
-    ar_catena: { id: "ar_catena", name: "Catena Zapata", reg: "Mendoza", flag: "🇦🇷", country: "Argentina", style: "espumante", lotCode: "LOTE-AR-CATENA-12", lat: -33.1667, lon: -68.9167, baseT: 21.6, baseH: 49, baseL: 26, t: 21.6, h: 49, l: 26 },
+    nz_cloudy: { id: "nz_cloudy", name: "Cloudy Bay", reg: "Marlborough", flag: "🇳🇿", country: "Nova Zelândia", style: "branco", lotCode: "LOTE-NZ-CLOUDY-10", lat: -41.4914, lon: 173.9619, baseT: 10.2, baseH: 68, baseL: 8, t: 10.2, h: 68, l: 8 },
+    za_kanonkop: { id: "za_kanonkop", name: "Kanonkop Estate", reg: "Stellenbosch", flag: "🇿🇦", country: "África do Sul", style: "tinto", lotCode: "LOTE-ES-VEGA-09", lat: -33.8569, lon: 18.8669, baseT: 16.0, baseH: 68, baseL: 10, t: 16.0, h: 68, l: 10 },
+    br_miolo: { id: "br_miolo", name: "Vinícola Miolo", reg: "Serra Gaúcha", flag: "🇧🇷", country: "Brasil", style: "rose", lotCode: "LOTE-BR-MIOLO-11", lat: -29.1864, lon: -51.5567, baseT: 11.4, baseH: 67, baseL: 7, t: 11.4, h: 67, l: 7 },
+    ar_catena: { id: "ar_catena", name: "Catena Zapata", reg: "Mendoza", flag: "🇦🇷", country: "Argentina", style: "espumante", lotCode: "LOTE-AR-CATENA-12", lat: -33.1667, lon: -68.9167, baseT: 7.6, baseH: 72, baseL: 5, t: 7.6, h: 72, l: 5 },
     wokwi_esp32: { id: "wokwi_esp32", name: "ESP32 Wokwi", reg: "HiveMQ :1883", flag: "📟", country: "Wokwi", style: "tinto", lotCode: "LOTE-FR-MARGAUX-01", lat: 0, lon: 0, baseT: 15.8, baseH: 68, baseL: 9, t: 15.8, h: 68, l: 9 }
   };
 
-  // Cliente REST direto para o Supabase Cloud (PostgreSQL PostgREST)
+  // Cliente REST Bidirecional para o Supabase Cloud (PostgreSQL PostgREST)
   let lastSupaTelemetryTs = 0;
   let lastSupaBulkTs = 0;
+  let supaConnected = false;
 
   function supaHeaders(prefer = "return=minimal") {
     return {
@@ -61,9 +62,20 @@
     };
   }
 
+  function updateSupabaseBadgeUI(ok, detail = "") {
+    supaConnected = ok;
+    const el = document.getElementById("supabase-sync-pill");
+    if (el) {
+      el.className = ok
+        ? "status-pill status-pill-live text-decoration-none"
+        : "status-pill text-decoration-none";
+      el.innerHTML = `<span class="status-dot ${ok ? "status-dot-live" : ""}"></span><span>Supabase SQL: ${ok ? ("SYNC" + (detail ? " · " + detail : "")) : "CONECTANDO..."}</span>`;
+    }
+  }
+
   function syncTelemetryToSupabase({ t = 15.8, h = 68, l = 9, cmd = "normal", score = 100, source = "SCADA Web & Wokwi", force = false } = {}) {
     const now = Date.now();
-    if (!force && now - lastSupaTelemetryTs < 6000) return;
+    if (!force && now - lastSupaTelemetryTs < 5000) return;
     lastSupaTelemetryTs = now;
     fetch(`${SUPABASE_URL}/rest/v1/vine_telemetry`, {
       method: "POST",
@@ -77,31 +89,35 @@
         cellar_health_score: Math.round(score || 100),
         source: source
       })
+    }).then(r => {
+      if (r.ok) updateSupabaseBadgeUI(true, `${Number(t).toFixed(1)}°C`);
     }).catch(() => {});
   }
 
   function syncLotsAndAreasToSupabase(activeWineKey = "tinto", force = false) {
     const now = Date.now();
-    if (!force && now - lastSupaBulkTs < 20000) return;
+    if (!force && now - lastSupaBulkTs < 15000) return;
     lastSupaBulkTs = now;
 
-    const pr = PRESETS[activeWineKey] || PRESETS.tinto;
-    // 1. Upsert do preset de Trigger ativo
+    // 1. Upsert de todos os 8 presets de Trigger (estilos de vinho)
+    const triggerRows = Object.values(PRESETS).map(pr => ({
+      preset_key: pr.key,
+      name: pr.name,
+      description: pr.desc,
+      temp_min: pr.tMin,
+      temp_max: pr.tMax,
+      hum_min: pr.hMin,
+      hum_max: pr.hMax,
+      lum_min: pr.lMin || 0,
+      lum_max: pr.lMax,
+      updated_at: new Date().toISOString()
+    }));
     fetch(`${SUPABASE_URL}/rest/v1/vine_trigger_configs`, {
       method: "POST",
       headers: supaHeaders("resolution=merge-duplicates,return=minimal"),
-      body: JSON.stringify({
-        preset_key: pr.key,
-        name: pr.name,
-        description: pr.desc,
-        temp_min: pr.tMin,
-        temp_max: pr.tMax,
-        hum_min: pr.hMin,
-        hum_max: pr.hMax,
-        lum_min: pr.lMin || 0,
-        lum_max: pr.lMax,
-        updated_at: new Date().toISOString()
-      })
+      body: JSON.stringify(triggerRows)
+    }).then(r => {
+      if (r.ok) updateSupabaseBadgeUI(true, (PRESETS[activeWineKey]?.name || "Ativo"));
     }).catch(() => {});
 
     // 2. Upsert em lote das 12 Áreas / Terroirs Globais
@@ -164,12 +180,34 @@
     }).catch(() => {});
   }
 
+  async function fetchLiveFromSupabase() {
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/vine_devices?select=device_id,entity_name,wokwi_project_url&limit=1`, {
+        headers: supaHeaders("return=representation")
+      });
+      if (r.ok) {
+        updateSupabaseBadgeUI(true, "PostgreSQL 17");
+        return await r.json();
+      }
+    } catch (_) {}
+    return null;
+  }
+
   window.CANONICAL_LOTS = CANONICAL_LOTS;
   window.PRESETS = PRESETS;
   window.TERROIRS = TERROIRS;
   window.SupabaseCloud = {
     url: SUPABASE_URL,
+    anonKey: SUPABASE_ANON_KEY,
+    isConnected: () => supaConnected,
     syncTelemetry: syncTelemetryToSupabase,
-    syncLotsAndAreas: syncLotsAndAreasToSupabase
+    syncLotsAndAreas: syncLotsAndAreasToSupabase,
+    fetchLive: fetchLiveFromSupabase
   };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => fetchLiveFromSupabase());
+  } else {
+    fetchLiveFromSupabase();
+  }
 })();

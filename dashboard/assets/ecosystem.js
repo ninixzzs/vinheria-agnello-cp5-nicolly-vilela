@@ -67,7 +67,7 @@ const ECOSYSTEM_SERVICES = [
     color: "success",
     desc: "Banco PostgreSQL na nuvem com 5 tabelas ativas e segurança Row Level Security (RLS).",
     inside: "Tabelas vine_telemetry, vine_devices, real_vineyards_status, cellar_lots e triggers.",
-    url: "https://slqozouuqzxwmfswyroo.supabase.co",
+    url: "api/v1/cloud/firebase/index.html",
     icon: "🗄️"
   }
 ];

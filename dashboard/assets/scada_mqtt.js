@@ -1,10 +1,11 @@
-// SCADA MQTT Transport — Ponte WebSocket Direta de Ultra-Baixa Latência (<20ms) Browser <-> Wokwi ESP32
+// SCADA MQTT Transport — Ponte WebSocket Direta de Ultra-Baixa Latência Browser <-> Wokwi ESP32 (#478106752109243393)
 (function () {
   let pahoClient = null;
   let isConnecting = false;
-  let useSslMode = window.location.protocol === "https:";
+  let useSslMode = true; // WSS (8884) funciona em https://, http:// e file:// sem bloqueio de firewall
   let onTelemetryCallback = null;
   let lastState = null;
+  let syncTimer = null;
 
   try {
     const saved = localStorage.getItem("vinheria_scada_state");
@@ -26,21 +27,32 @@
   }
 
   function flushState(st) {
-    if (!st) return false;
+    if (!st || !pahoClient || !pahoClient.isConnected()) return false;
     const t = typeof st.t === "number" ? st.t : 15.8;
     const h = typeof st.h === "number" ? st.h : 68.0;
     const l = typeof st.l === "number" ? st.l : 9.0;
-    const cmd = st.cmd || "normal";
+    // No Wokwi #478106752109243393, curPreset só aparece no LCD quando curMode == "normal"
+    const wokwiMode = (st.stateKey === "critico" || st.cmd === "multi") ? "multi" : "normal";
     const score = typeof st.score === "number" ? Math.round(st.score) : 100;
     const verdict = (st.verdict || "OK").toString().slice(0, 3).toUpperCase();
     const tag = (st.tag || "TINTO").toString().trim().toUpperCase().slice(0, 5);
 
-    // Envia pacote atômico unificado compreendido nativamente pelo sketch.ino (cmd == "state")
-    const okState = sendPacket(
+    // 1. Envia comando 'diag' compreendido pelo Wokwi #478106752109243393 para trocar curPreset, curHealth e curMode
+    const okDiag = sendPacket(
       "/TEF/vine001/cmd",
-      `vine001@state|${t.toFixed(1)}|${h.toFixed(1)}|${l.toFixed(1)}|${cmd}|${score}|${verdict}|${tag}`
+      `vine001@diag|${wokwiMode}|${score}|${verdict}|${tag}`
     );
-    return okState;
+
+    // 2. Envia comando 'sync' com 90ms de intervalo para evitar coalescência TCP no buffer de 256 bytes do ESP32
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      sendPacket(
+        "/TEF/vine001/cmd",
+        `vine001@sync|${t.toFixed(1)}|${h.toFixed(1)}|${l.toFixed(1)}`
+      );
+    }, 90);
+
+    return okDiag;
   }
 
   function initMqtt(onTelemetry) {
@@ -86,7 +98,7 @@
         }
       };
 
-      // Nota importante: Paho MQTT 1.0.1 NÃO aceita 'reconnect: true' em connectOptions (lança AMQJS0013E)
+      // Paho MQTT 1.0.1 não aceita 'reconnect: true' em connectOptions
       pahoClient.connect({
         useSSL: useSslMode,
         timeout: 4,
@@ -103,11 +115,10 @@
         onFailure: () => {
           isConnecting = false;
           pahoClient = null;
-          // Se estiver em HTTP/file:// e uma porta falhar, alterna entre 8884 (WSS) e 8000 (WS)
           if (window.location.protocol !== "https:") {
             useSslMode = !useSslMode;
           }
-          setTimeout(() => initMqtt(onTelemetryCallback), 1000);
+          setTimeout(() => initMqtt(onTelemetryCallback), 900);
         }
       });
     } catch (_) {
@@ -126,7 +137,6 @@
     }
   }
 
-  // Sincroniza estado entre abas abertas (ex.: index.html <-> dashboard.html)
   window.addEventListener("storage", (e) => {
     if (e.key === "vinheria_scada_state" && e.newValue) {
       try {
@@ -135,13 +145,13 @@
     }
   });
 
-  // Keepalive a cada 2.5s apenas na aba visível para nunca haver conflito entre abas
+  // Keepalive a cada 2.0s apenas na aba visível para manter o Wokwi sincronizado com o vinho ativo
   setInterval(() => {
     if (document.hidden) return;
     if (lastState && pahoClient && pahoClient.isConnected()) {
       flushState(lastState);
     }
-  }, 2500);
+  }, 2000);
 
   initMqtt();
 

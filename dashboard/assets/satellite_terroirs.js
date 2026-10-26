@@ -72,7 +72,7 @@
     const c = document.getElementById("real-vineyards-grid");
     if (!c) return;
     const act = activeId || window.curArea || "fr_margaux";
-    const pr = (window.PRESETS && window.PRESETS[window.curPr || "tinto"]) || { name: "Vinho Tinto", badge: "🍷 TINTO", tMin: 14, tMax: 18, hMin: 60, hMax: 75, lMax: 25 };
+    const activePr = (window.PRESETS && window.PRESETS[window.curPr || "tinto"]) || { name: "Vinho Tinto", badge: "🍷 TINTO", tMin: 14, tMax: 18, hMin: 60, hMax: 75, lMax: 25 };
     const curMode = window.curScadaMode || "normal";
     const handler = onSelectCallback || window.onAreaTerroirChange;
     const list = Object.values(window.TERROIRS || {}).filter(x => x.id !== "wokwi_esp32");
@@ -93,16 +93,18 @@
       const l = (isAct && typeof liveLum === "number") ? liveLum : v.l;
       const dew = calcDewPoint(t, h);
 
-      // Avalia a área selecionada com os mesmos parâmetros ativos do painel principal
-      const ev = evalTerroirForWine(t, h, l, pr, isAct ? curMode : null);
+      // Avalia a área selecionada contra o preset ativo, e as demais contra o estilo nativo da própria cave
+      const targetPr = isAct ? activePr : ((window.PRESETS && window.PRESETS[v.style]) || activePr);
+      const ev = evalTerroirForWine(t, h, l, targetPr, isAct ? curMode : null);
       if (ev.stateKey === "ideal") idealCount++;
       else if (ev.stateKey === "padrao") padraoCount++;
       else critCount++;
 
       const justClicked = lastClickedTerroir === v.id;
+      const isStyleMatch = v.style === (window.curPr || "tinto");
       const cls = [
         "vineyard-card h-100",
-        isAct ? "active-vineyard border-gold" : (ev.stateKey === "ideal" ? "lot-style-match" : "lot-dimmed"),
+        isAct ? "active-vineyard border-gold" : (isStyleMatch ? "lot-style-match" : "lot-dimmed"),
         justClicked ? "lot-click-pop" : ""
       ].filter(Boolean).join(" ");
 
@@ -142,7 +144,7 @@
     const badge = document.getElementById("satellite-live-badge");
     if (badge) {
       badge.className = "badge font-monospace bg-success bg-opacity-25 text-success border border-success border-opacity-50";
-      badge.innerHTML = `<span class="status-dot"></span>12 ÁREAS WMO · ${pr.badge || "🍷 VINHO"} (🟢 ${idealCount} · 🔵 ${padraoCount} · 🔴 ${critCount})`;
+      badge.innerHTML = `<span class="status-dot"></span>12 ÁREAS WMO · ${activePr.badge || "🍷 VINHO"} (🟢 ${idealCount} · 🔵 ${padraoCount} · 🔴 ${critCount})`;
     }
 
     if (handler) {

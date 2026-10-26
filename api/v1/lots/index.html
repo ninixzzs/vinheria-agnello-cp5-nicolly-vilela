@@ -4,7 +4,7 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>API REST v1 (Lotes & Cavas em Tempo Real) · Vinheria Agnello</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../../dashboard/assets/style.css?v=20261025_v15">
+  <link rel="stylesheet" href="../../../dashboard/assets/style.css?v=20261026_v20">
 </head>
 <body class="bg-body py-4">
   <div class="container" style="max-width: 1040px;">
@@ -29,8 +29,8 @@
       </div>
     </div>
   </div>
-  <script src="../../../dashboard/assets/wine_catalog.js?v=20261025_v15"></script>
-  <script src="../../../dashboard/assets/theme.js?v=20261025_v15"></script>
+  <script src="../../../dashboard/assets/wine_catalog.js?v=20261026_v20"></script>
+  <script src="../../../dashboard/assets/theme.js?v=20261026_v20"></script>
   <script>
     (function () {
       let phase = 0;
@@ -38,13 +38,17 @@
         phase += 0.25;
         const activePreset = localStorage.getItem("vinheria_preset") || "tinto";
         const lots = (window.CANONICAL_LOTS || []).map((lt, idx) => {
-          const pr = (window.PRESETS && window.PRESETS[lt.style]) || { defT: 15.6, defH: 68, defL: 9 };
-          const t = +(pr.defT + Math.sin(phase + idx * 0.6) * 0.15).toFixed(1);
-          const h = Math.round(pr.defH + Math.cos(phase + idx * 0.5) * 0.4);
-          const l = Math.max(2, Math.round(pr.defL + Math.sin(phase + idx * 0.4) * 0.5));
-          const inT = t >= lt.tMin && t <= lt.tMax;
-          const inH = h >= lt.hMin && h <= lt.hMax;
-          const inL = l <= lt.lMax;
+          const tMin = lt.temp ? lt.temp[0] : 14;
+          const tMax = lt.temp ? lt.temp[1] : 18;
+          const hMin = lt.hum ? lt.hum[0] : 60;
+          const hMax = lt.hum ? lt.hum[1] : 75;
+          const lMax = lt.lum ?? 25;
+          const t = +((lt.baseT || 15.8) + Math.sin(phase + idx * 0.6) * 0.15).toFixed(1);
+          const h = Math.round((lt.baseH || 68) + Math.cos(phase + idx * 0.5) * 0.4);
+          const l = Math.max(2, Math.round((lt.baseL || 9) + Math.sin(phase + idx * 0.4) * 0.4));
+          const inT = t >= tMin && t <= tMax;
+          const inH = h >= hMin && h <= hMax;
+          const inL = l <= lMax;
           const score = (inT && inH && inL) ? 100 : 88;
           return {
             lot_code: lt.code,
@@ -57,11 +61,11 @@
             temperature_c: t,
             humidity_pct: h,
             luminosity_pct: l,
-            target_temp_c: [lt.tMin, lt.tMax],
-            target_hum_pct: [lt.hMin, lt.hMax],
-            target_lum_max_pct: lt.lMax,
+            target_temp_c: [tMin, tMax],
+            target_hum_pct: [hMin, hMax],
+            target_lum_max_pct: lMax,
             health_score: score,
-            status_state: score >= 95 ? "IDEAL" : "ATENÇÃO",
+            status_state: score >= 95 ? "IDEAL" : "PADRÃO",
             verdict: score >= 95 ? "Equilíbrio Ideal" : "Atenção Preventiva",
             updated_at: new Date().toISOString()
           };
