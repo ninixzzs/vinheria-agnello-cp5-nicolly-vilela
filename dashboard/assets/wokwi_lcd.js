@@ -58,7 +58,7 @@
       if (nm.includes("laranja")) return "LARAN";
       if (nm.includes("brut") || nm.includes("espumante")) return "BRUT";
       if (nm.includes("rose") || nm.includes("rosé")) return "ROSE";
-      if (nm.includes("branco")) return "BRANCO";
+      if (nm.includes("branco")) return "BRANC";
       return "TINTO";
     })();
 
@@ -100,7 +100,6 @@
       crtApogee.className = isIdeal ? "text-success fw-bold" : (isCrit ? "text-danger fw-bold" : "text-info fw-bold");
     }
 
-    // Painel de Luzes LED: APENAS 3 ESTADOS (🟢 IDEAL | 🔵 PADRÃO | 🔴 CRÍTICO)
     const stIdealEl = document.getElementById("led-state-ideal");
     const stPadraoEl = document.getElementById("led-state-padrao");
     const stCritEl = document.getElementById("led-state-critico");
@@ -117,7 +116,6 @@
     if (ledR) ledR.className = isCrit ? "led-indicator led-red-on led-red-blinking" : "led-indicator led-red-off";
     if (lblR) lblR.textContent = isCrit ? "D18: CRÍTICO!" : "D18: OFF";
 
-    // Buzzer (D4): Apenas o CRÍTICO (Vermelho) solta o apito!
     const bzIcon = document.getElementById("buzzer-status-icon"), bzTxt = document.getElementById("buzzer-status-text");
     if (bzIcon) bzIcon.textContent = isCrit ? "🚨" : "🔇";
     if (bzTxt) bzTxt.textContent = isCrit ? "D4 APITANDO!" : "D4 Mudo";

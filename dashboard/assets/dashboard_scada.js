@@ -2,7 +2,15 @@
 (function () {
   const PRESETS = window.PRESETS || {}, TERROIRS = window.TERROIRS || {};
   let curPr = "tinto", curArea = "fr_margaux";
-  let sim = { t: 15.8, h: 68.0, l: 9.0, score: 99, mode: "normal" };
+  try {
+    const savedPr = localStorage.getItem("vinheria_preset");
+    if (savedPr && PRESETS[savedPr]) curPr = savedPr;
+  } catch (_) {}
+
+  const initPreset = PRESETS[curPr] || PRESETS.tinto || { defT: 15.8, defH: 68.0, defL: 9.0, defaultLot: "LOTE-FR-MARGAUX-01", defaultTerroir: "fr_margaux" };
+  if (initPreset.defaultLot) window.curLotCode = initPreset.defaultLot;
+  if (initPreset.defaultTerroir) curArea = initPreset.defaultTerroir;
+  let sim = { t: initPreset.defT || 15.8, h: initPreset.defH || 68.0, l: initPreset.defL || 9.0, score: 99, mode: "normal" };
   window.curPr = curPr; window.curArea = curArea;
 
   function getActiveLot() {
@@ -48,8 +56,10 @@
     if (bge) bge.innerHTML = `<span class="status-dot"></span>WOKWI /cmd: ${stKey.toUpperCase()} (${tag} · ${sc}%)`;
     document.querySelectorAll(".sc-btn").forEach(b => b.classList.toggle("active", b.dataset.sc === cmd));
 
-    // Envio imediato via WebSocket para o Wokwi ESP32 em qualquer mudança de estado
-    window.ScadaMQTT?.publishState?.({ t, h, l, cmd, stateKey: stKey, score: sc, verdict: v, tag });
+    // Envio imediato via WebSocket para o Wokwi ESP32 quando a aba está ativa ou em ação do usuário
+    if (userTriggered || !document.hidden) {
+      window.ScadaMQTT?.publishState?.({ t, h, l, cmd, stateKey: stKey, score: sc, verdict: v, tag });
+    }
 
     if (userTriggered) {
       window.arcadeAudio?.ensureContext?.();
@@ -60,7 +70,11 @@
       else if (soundType && soundType.startsWith("sc:")) window.ArcadeAudio?.playScenario?.(soundType.slice(3));
       else if (stKey === "ideal") window.ArcadeAudio?.playPowerup?.();
       else window.ArcadeAudio?.playScenario?.("padrao");
-      fetch("/api/v1/command", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ command: cmd, preset: tag, health: sc, verdict: v, temperature: t, humidity: h, luminosity: l }) }).catch(() => {});
+      fetch("/api/v1/command", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ command: cmd, preset: tag, preset_key: curPr, health: sc, verdict: v, temperature: t, humidity: h, luminosity: l })
+      }).catch(() => {});
     }
   }
 
@@ -74,7 +88,7 @@
     const descEl = document.getElementById("preset-description-text"); if (descEl) descEl.textContent = p.desc || "";
   }
 
-  function onWinePresetChange(presetKey, keepLot = false) {
+  function onWinePresetChange(presetKey, keepLot = false, userTriggered = true) {
     const normKey = presetKey === "brut" ? "espumante" : presetKey;
     curPr = PRESETS[normKey] ? normKey : "tinto";
     window.curPr = curPr;
@@ -85,7 +99,7 @@
       if (defLot?.terroirId) { curArea = defLot.terroirId; window.curArea = curArea; const selT = document.getElementById("dropdown-area-terroir"); if (selT) selT.value = curArea; }
       sim.mode = "normal"; sim.t = defLot ? defLot.liveT : p.defT; sim.h = defLot ? defLot.liveH : p.defH; sim.l = defLot ? defLot.liveL : p.defL;
     }
-    syncPresetControls(p); updateHardwarePlaque(sim.t, sim.h, sim.l, true, "wine");
+    syncPresetControls(p); updateHardwarePlaque(sim.t, sim.h, sim.l, userTriggered, "wine");
     window.ScadaCharts?.renderAllCharts?.(sim.t, sim.h, sim.l, p, getActiveLot(), true);
     renderRealVineyards(); renderCellarLots(); syncCloudConfig();
   }
@@ -161,6 +175,7 @@
   }
 
   function fetchLiveTicker() {
+    if (document.hidden) return;
     sim.t = +(sim.t + (Math.random() - 0.5) * 0.06).toFixed(1);
     sim.h = Math.max(20, Math.min(99, +(sim.h + (Math.random() - 0.5) * 0.25).toFixed(0)));
     updateHardwarePlaque(sim.t, sim.h, sim.l, false);
@@ -168,9 +183,19 @@
     renderCellarLots(); renderRealVineyards();
   }
 
+  // Sincronia imediata quando outra aba (ex.: index.html) troca o estilo de vinho
+  window.addEventListener("storage", (e) => {
+    if (e.key === "vinheria_preset" && e.newValue && e.newValue !== curPr && PRESETS[e.newValue]) {
+      onWinePresetChange(e.newValue, false, false);
+    }
+  });
+
   function bootScada() {
+    // Só inicializa o orquestrador HTML5 quando os controles do dashboard.html existem na página
+    if (!document.getElementById("wine-style-pills") && !document.getElementById("wokwi-lcd-l1")) return;
+    syncPresetControls(PRESETS[curPr] || {});
     renderCellarLots(); renderRealVineyards();
-    updateHardwarePlaque(sim.t, sim.h, sim.l, false);
+    updateHardwarePlaque(sim.t, sim.h, sim.l, true);
     window.ScadaCharts?.renderAllCharts?.(sim.t, sim.h, sim.l, PRESETS[curPr], getActiveLot(), true);
     window.ScadaMQTT?.init?.((d) => {
       if (curArea !== "wokwi_esp32") return;

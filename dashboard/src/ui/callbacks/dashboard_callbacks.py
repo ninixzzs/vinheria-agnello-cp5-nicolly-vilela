@@ -51,6 +51,14 @@ def register_dashboard_callbacks(app: Dash) -> None:
     def apply_wine_preset(preset_key: str) -> Tuple[float, float, float, float, float, float, str]:
         """Aplica automaticamente os limites de Temperatura, Umidade e Luminosidade do Preset."""
         p = WINE_PRESETS.get(preset_key, WINE_PRESETS["tinto"])
+        preset_lcd = str(p.get("lcd", "TINTO"))
+        def_t = float(p.get("def_temp", 15.8))
+        def_h = float(p.get("def_hum", 68.0))
+        def_l = float(p.get("def_lum", 9.0))
+        wokwi = WokwiMqttRepository.get_instance()
+        wokwi.ensure_connected()
+        wokwi.publish_sync(def_t, def_h, def_l)
+        wokwi.publish_diagnostic("normal", 100, "OK", preset_lcd, force=True)
         return (
             float(p["temp_min"]), float(p["temp_max"]),
             float(p["hum_min"]), float(p["hum_max"]),
@@ -115,16 +123,23 @@ def register_dashboard_callbacks(app: Dash) -> None:
         preset_cfg = WINE_PRESETS.get(wine_preset, WINE_PRESETS["tinto"])
         wine_style, preset_lcd = str(preset_cfg.get("style", "tinto")), str(preset_cfg.get("lcd", "TINTO"))
 
-        t_lo, t_hi = _safe_range(t_min, t_max, 12.0, 18.0)
-        h_lo, h_hi = _safe_range(h_min, h_max, 60.0, 75.0)
-        l_lo, l_hi = _safe_range(l_min, l_max, 0.0, 25.0)
+        t_lo, t_hi = _safe_range(t_min, t_max, float(preset_cfg["temp_min"]), float(preset_cfg["temp_max"]))
+        h_lo, h_hi = _safe_range(h_min, h_max, float(preset_cfg["hum_min"]), float(preset_cfg["hum_max"]))
+        l_lo, l_hi = _safe_range(l_min, l_max, float(preset_cfg["lum_min"]), float(preset_cfg["lum_max"]))
         triggers = TriggerConfig(t_lo, t_hi, h_lo, h_hi, l_lo, l_hi)
+
+        def_t = float(preset_cfg.get("def_temp", 15.8))
+        def_h = float(preset_cfg.get("def_hum", 68.0))
+        def_l = float(preset_cfg.get("def_lum", 9.0))
+        base_t = def_t if scenario_mode in ("wokwi_live", "normal", None) else float(sim_temp if sim_temp is not None else def_t)
+        base_h = def_h if scenario_mode in ("wokwi_live", "normal", None) else float(sim_hum if sim_hum is not None else def_h)
+        base_l = def_l if scenario_mode in ("wokwi_live", "normal", None) else float(sim_lum if sim_lum is not None else def_l)
 
         tick = int(n_intervals or 0)
         wave = math.sin(tick * 0.55)
-        cur_t = round(max(-40.0, min(80.0, float(sim_temp if sim_temp is not None else 15.5))) + wave * 0.2, 1)
-        cur_h = round(max(0.0, min(100.0, float(sim_hum if sim_hum is not None else 68.0))) + math.cos(tick * 0.45) * 0.5, 1)
-        cur_l = round(max(0.0, min(100.0, float(sim_lum if sim_lum is not None else 12.0) + wave * 0.4)), 1)
+        cur_t = round(max(-40.0, min(80.0, base_t)) + wave * 0.2, 1)
+        cur_h = round(max(0.0, min(100.0, base_h)) + math.cos(tick * 0.45) * 0.5, 1)
+        cur_l = round(max(0.0, min(100.0, base_l + wave * 0.4)), 1)
 
         wokwi_series, wokwi_snap, wokwi_meta = DeviceManagerService.get_wokwi_realtime_data(
             broker_host=clean_broker, device_id=device_id, api_key=api_key, last_n=n_samples
@@ -149,7 +164,7 @@ def register_dashboard_callbacks(app: Dash) -> None:
             temp_pts, hum_pts, lum_pts = v_series.temperature, v_series.humidity, v_series.luminosity
             source_label = f"{v_info.name} • {preset_cfg['name']}" if v_info else "Vinícola Real"
             push_to_wokwi_lcd = ctx.triggered_id in ("dropdown-real-vineyard", "dropdown-wine-preset") or (tick % 5 == 0)
-        elif scenario_mode == "wokwi_live" and wokwi_snap is not None:
+        elif scenario_mode == "wokwi_live" and wokwi_snap is not None and ctx.triggered_id != "dropdown-wine-preset":
             active_snapshot = wokwi_snap
             temp_pts, hum_pts, lum_pts = wokwi_series.temperature, wokwi_series.humidity, wokwi_series.luminosity
             source_label = f"Wokwi #478106752109243393 ↔ Site [{preset_lcd}]"
@@ -163,7 +178,9 @@ def register_dashboard_callbacks(app: Dash) -> None:
             hum_pts = [TimeSeriesPoint(d["t"], float(d["v"])) for d in store["humidity"]]
             lum_pts = [TimeSeriesPoint(d["t"], float(d["v"])) for d in store["luminosity"]]
             source_label = f"Sincronizado ↔ Wokwi [{preset_lcd}]"
-            push_to_wokwi_lcd = scenario_mode != "wokwi_live" and (ctx.triggered_id != "interval-auto-refresh" or tick % 5 == 0)
+            push_to_wokwi_lcd = (ctx.triggered_id == "dropdown-wine-preset") or (
+                scenario_mode != "wokwi_live" and (ctx.triggered_id != "interval-auto-refresh" or tick % 5 == 0)
+            )
 
         is_user_action = ctx.triggered_id not in (None, "interval-auto-refresh")
         evaluation, _, dispatch_msg = TriggerAlertService.evaluate_and_dispatch_remote_alert(

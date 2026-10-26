@@ -85,7 +85,7 @@ void applyCommand(String msg) {
   if (sep == -1) {
     msg.trim();
     if (msg == "normal" || msg == "padrao" || msg == "multi" || msg == "critico") curMode = (msg == "critico") ? "multi" : msg;
-    else { curPreset = msg; curPreset.toUpperCase(); }
+    else { curPreset = msg; curPreset.trim(); curPreset.toUpperCase(); }
   } else {
     String cmd = msg.substring(0, sep), args = msg.substring(sep + 1);
     if (cmd == "live") { remoteSync = false; validTemp = hwTemp; validHum = hwHum; validLum = hwLum; }
@@ -95,7 +95,8 @@ void applyCommand(String msg) {
       if (p1 != -1 && p2 != -1 && p3 != -1 && p4 != -1 && p5 != -1 && p6 != -1) {
         validTemp = args.substring(0, p1).toFloat(); validHum = args.substring(p1 + 1, p2).toFloat(); validLum = args.substring(p2 + 1, p3).toFloat();
         curMode = args.substring(p3 + 1, p4); curHealth = args.substring(p4 + 1, p5).toInt();
-        curVerdict = args.substring(p5 + 1, p6); curPreset = args.substring(p6 + 1); remoteSync = true;
+        curVerdict = args.substring(p5 + 1, p6); curPreset = args.substring(p6 + 1);
+        curPreset.trim(); curPreset.toUpperCase(); remoteSync = true;
       }
     } else if (cmd == "sync") {
       int p1 = args.indexOf('|'), p2 = args.lastIndexOf('|');
@@ -104,10 +105,13 @@ void applyCommand(String msg) {
       int p1 = args.indexOf('|');
       if (p1 != -1) {
         curMode = args.substring(0, p1); String rest = args.substring(p1 + 1); int p2 = rest.indexOf('|');
-        if (p2 != -1) { curHealth = rest.substring(0, p2).toInt(); String rest2 = rest.substring(p2 + 1); int p3 = rest2.indexOf('|'); if (p3 != -1) { curVerdict = rest2.substring(0, p3); curPreset = rest2.substring(p3 + 1); } }
+        if (p2 != -1) {
+          curHealth = rest.substring(0, p2).toInt(); String rest2 = rest.substring(p2 + 1); int p3 = rest2.indexOf('|');
+          if (p3 != -1) { curVerdict = rest2.substring(0, p3); curPreset = rest2.substring(p3 + 1); curPreset.trim(); curPreset.toUpperCase(); }
+        }
       }
     } else if (cmd == "alert") { int p1 = args.indexOf('|'); curMode = (p1 != -1) ? args.substring(0, p1) : args; }
-    else if (cmd == "preset" || cmd == "wine") { curPreset = args; curPreset.toUpperCase(); }
+    else if (cmd == "preset" || cmd == "wine") { curPreset = args; curPreset.trim(); curPreset.toUpperCase(); }
   }
   curMode.trim(); if (curMode == "critico") curMode = "multi"; if (curMode.length() == 0) curMode = "normal";
   bool chg = (prev != curMode) || (prevPr != curPreset);
