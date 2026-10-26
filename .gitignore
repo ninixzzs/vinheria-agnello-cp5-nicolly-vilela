@@ -18,5 +18,6 @@ build/
 # IDE / OS
 .vscode/
 .idea/
+.agents/
 Thumbs.db
 .DS_Store

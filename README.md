@@ -129,14 +129,16 @@ O **Índice de Saúde Enológica (`0% a 100%`)** avalia desvios térmicos, higro
 vinheria-agnello-cp5-nicolly-vilela/
 ├── sketch.ino                         # Firmware C++ principal do ESP32 (Wokwi, I2C HD44780, DHT22, LDR e MQTT)
 ├── diagram.json                       # Circuito elétrico completo do ESP32 no simulador Wokwi
+├── index.html                         # Portal Sommelier & Visualização do Barril 3D com LCD interativo
 ├── dashboard.html                     # Aplicação Web SCADA Sommelier interativa em tempo real
 ├── api/v1/                            # Endpoints REST v1 (/status, /lots, /cloud/firebase e openapi.json)
 ├── dashboard/
+│   ├── app.py                         # Servidor principal da aplicação e API REST v1 (Porta 8050)
 │   ├── assets/                        # Módulos Front-end (wine_catalog, cellar_lots, satellite_terroirs, scada_mqtt, style.css)
-│   ├── src/                           # Back-end modular Python (config, data, domain, services e ui)
+│   ├── src/                           # Back-end modular Python (config, models, repositories, services e ui)
 │   └── tests/                         # Suíte de testes unitários e de integração (Pytest)
 ├── hardware/
-│   ├── impressao_3d/                  # Modelos CAD 3D (Corpo_Barril.STL e Tampa_Display_LCD16x2.STL)
+│   ├── handson_dht11/                 # Firmware para bancada física em laboratório (ESP32 + DHT11)
 │   └── wokwi_dht22/                   # Firmware espelhado e diagramas dedicados para validação Wokwi
 └── integrantes.txt                    # Identificação oficial da aluna Nicolly Vilela (FIAP CP5)
 ```
@@ -146,11 +148,11 @@ vinheria-agnello-cp5-nicolly-vilela/
 ## 🚀 9. Como Executar e Testar o Projeto
 
 1. **Execução Instantânea do Dashboard (Navegador)**:
-   - Dê duplo clique em `dashboard.html` ou execute `ABRIR_SITE.bat`.
+   - Dê duplo clique em `index.html`, `dashboard.html` ou execute `INICIAR_PROJETO.bat`.
 2. **Execução do Servidor Back-End Python (`Porta 8050`)**:
    ```bash
    pip install -r dashboard/requirements.txt
-   python dashboard/src/app.py
+   python dashboard/app.py
    ```
 3. **Execução da Suíte de Testes Automatizados**:
    ```bash
