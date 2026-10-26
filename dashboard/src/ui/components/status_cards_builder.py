@@ -43,7 +43,7 @@ def build_wokwi_status_bar(meta: Dict[str, object]) -> html.Div:
             ),
             html.A("Portal HTML5", href="/portal", target="_blank", className="nav-ghost-link ms-2"),
             html.A("API", href="/api/v1/status", target="_blank", className="nav-ghost-link ms-2"),
-            html.A("GitHub", href="https://github.com/nicollyvilela/vinheria-fiware-esp32", target="_blank", className="nav-ghost-link ms-2"),
+            html.A("GitHub", href="https://github.com/ninixzzs/vinheria-agnello-cp5-nicolly-vilela", target="_blank", className="nav-ghost-link ms-2"),
         ],
         className="d-flex align-items-center",
     )
