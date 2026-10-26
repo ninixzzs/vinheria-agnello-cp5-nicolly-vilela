@@ -11,7 +11,7 @@ from src.repositories.firebase_repository import FirebaseRepository
 from src.repositories.supabase_repository import SupabaseRepository
 from src.ui.api_firebase_routes import api_firebase_bp
 
-GITHUB_REPO_URL = "https://github.com/six01010101010101/vinheria-fiware-esp32"
+GITHUB_REPO_URL = "https://github.com/nicollyvilela/vinheria-fiware-esp32"
 RENDER_DEFAULT_URL = "https://checkpoint5-vinheria-fiware-esp32-1.onrender.com"
 
 

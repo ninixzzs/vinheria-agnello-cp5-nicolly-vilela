@@ -1,0 +1,12 @@
+===================================================================
+FIAP — CHECK POINT 5 — VINHERIA AGNELLO (IOT, FIWARE & ESP32)
+===================================================================
+
+Aluna: Nicolly Vilela
+Curso: Engenharia de Software / Edge Computing & Computer Systems
+Projeto: Monitoramento Inteligente de Cavas Subterrâneas e Terroirs (Vinheria Agnello)
+
+Links do Projeto:
+- Simulador Wokwi (ESP32 + Sensores + LCD 16x2): https://wokwi.com/projects/478106752109243393
+- Dashboard Interativo: dashboard.html
+===================================================================

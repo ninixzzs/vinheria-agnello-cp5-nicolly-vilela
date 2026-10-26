@@ -53,7 +53,7 @@ echo.
 echo ============================================================================
 echo   SUCESSO! Os arquivos foram enviados para o GitHub com sucesso.
 echo   Link no Render:      https://checkpoint5-vinheria-fiware-esp32-1.onrender.com/
-echo   Repositório:         https://github.com/six01010101010101/vinheria-fiware-esp32
+echo   Repositório:         https://github.com/nicollyvilela/vinheria-fiware-esp32
 echo ============================================================================
 echo.
 timeout /t 5
