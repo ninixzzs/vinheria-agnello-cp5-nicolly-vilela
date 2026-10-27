@@ -7,7 +7,8 @@ const char *WIFI_SSID = "Wokwi-GUEST", *WIFI_PASS = "", *MQTT_BROKER = "broker.h
 const int MQTT_PORT = 1883;
 const char *TOPIC_ATTRS = "/TEF/vine001/attrs", *TOPIC_CMD = "/TEF/vine001/cmd", *TOPIC_CMDEXE = "/TEF/vine001/cmdexe";
 
-enum Pins { PIN_LED_BLUE = 2, PIN_BUZZER = 4, PIN_LED_GREEN = 5, PIN_DHT = 15, PIN_LED_RED = 18, PIN_LDR = 34, LCD_ADDR = 0x27 };
+enum Pins { PIN_LED_BLUE = 2, PIN_BUZZER = 4, PIN_LED_GREEN = 5, PIN_DHT = 15, PIN_LED_RED = 18, PIN_LDR = 34 };
+uint8_t lcdAddr = 0x27;
 
 const uint8_t CHAR_COIN[8]={0x0E,0x1F,0x15,0x15,0x15,0x1F,0x0E,0x00}, CHAR_DROP[8]={0x04,0x04,0x0A,0x11,0x11,0x11,0x0E,0x00}, CHAR_STAR[8]={0x04,0x15,0x0E,0x1F,0x0E,0x15,0x04,0x00};
 
@@ -18,12 +19,15 @@ bool ledState = false, remoteSync = false;
 unsigned long lastDhtMs = 0, lastLdrMs = 0, lastPubMs = 0, lastBlinkMs = 0, lastPingMs = 0, lastRetryMs = 0;
 float validTemp = 15.8f, validHum = 68.0f, validLum = 9.0f, hwTemp = 15.8f, hwHum = 68.0f, hwLum = 9.0f;
 
-void lcdExpanderWrite(uint8_t d) { Wire.beginTransmission(LCD_ADDR); Wire.write(d | 0x08); Wire.endTransmission(); }
+void lcdExpanderWrite(uint8_t d) { Wire.beginTransmission(lcdAddr); Wire.write(d | 0x08); Wire.endTransmission(); }
 void lcdWrite4(uint8_t v) { lcdExpanderWrite(v); lcdExpanderWrite(v | 0x04); delayMicroseconds(2); lcdExpanderWrite(v & ~0x04); delayMicroseconds(40); }
 void lcdSend(uint8_t v, uint8_t m) { lcdWrite4((v & 0xF0) | m); lcdWrite4(((v << 4) & 0xF0) | m); }
 void lcdCreateChar(uint8_t loc, const uint8_t map[8]) { lcdSend(0x40 | ((loc & 0x7) << 3), 0); for (int i = 0; i < 8; i++) lcdSend(map[i], 1); lcdSend(0x80, 0); }
 void lcdInit() {
-  Wire.begin(21, 22); Wire.setClock(400000); delay(40); lcdExpanderWrite(0x00); delay(15);
+  Wire.begin(21, 22); Wire.setClock(400000); delay(40);
+  Wire.beginTransmission(0x27);
+  if (Wire.endTransmission() != 0) { Wire.beginTransmission(0x3F); if (Wire.endTransmission() == 0) lcdAddr = 0x3F; }
+  lcdExpanderWrite(0x00); delay(15);
   lcdWrite4(0x30); delayMicroseconds(4500); lcdWrite4(0x30); delayMicroseconds(4500);
   lcdWrite4(0x30); delayMicroseconds(150);  lcdWrite4(0x20); delayMicroseconds(150);
   lcdSend(0x28, 0); lcdSend(0x0C, 0); lcdSend(0x06, 0); lcdSend(0x01, 0); delay(3);
@@ -64,6 +68,7 @@ bool readDht22(float &tOut, float &hOut) {
   if (sum != d[4] || (d[0] == 0 && d[1] == 0 && d[2] == 0 && d[3] == 0)) return false;
   float h = ((uint16_t)(d[0] << 8) | d[1]) * 0.1f, t = ((uint16_t)((d[2] & 0x7F) << 8) | d[3]) * 0.1f;
   if (d[2] & 0x80) t = -t;
+  if (h > 100.0f && d[0] <= 100 && d[2] <= 60) { h = d[0] + d[1] * 0.1f; t = d[2] + d[3] * 0.1f; } // Auto-detecta DHT11 físico
   if (isnan(t) || isnan(h) || t < -40.0f || t > 80.0f || h < 0.0f || h > 100.0f) return false;
   tOut = t; hOut = h; return true;
 }
@@ -197,7 +202,9 @@ void setup() {
   pinMode(PIN_LED_GREEN, OUTPUT); pinMode(PIN_LED_RED, OUTPUT); pinMode(PIN_LED_BLUE, OUTPUT); pinMode(PIN_BUZZER, OUTPUT); pinMode(PIN_LDR, INPUT);
   digitalWrite(PIN_LED_GREEN, HIGH); digitalWrite(PIN_LED_RED, LOW); digitalWrite(PIN_LED_BLUE, LOW);
   lcdInit(); updateLcd();
-  WiFi.mode(WIFI_STA); WiFi.setSleep(false); WiFi.begin(WIFI_SSID, WIFI_PASS, 6);
+  WiFi.mode(WIFI_STA); WiFi.setSleep(false);
+  if (String(WIFI_SSID) == "Wokwi-GUEST") WiFi.begin(WIFI_SSID, WIFI_PASS, 6);
+  else WiFi.begin(WIFI_SSID, WIFI_PASS);
   while (WiFi.status() != WL_CONNECTED) delay(30);
 }
 void loop() { checkMqtt(); mqttLoop(); handleActuators(); readAndPubSensors(); delay(1); }
