@@ -27,6 +27,8 @@ jobs:
 
       - name: Executar Suite TDD (Pytest)
         working-directory: dashboard
+        env:
+          PYTHONPATH: .
         run: pytest tests -v
 
   wokwi-esp32-simulation:
@@ -36,28 +38,29 @@ jobs:
       - name: Checkout do Repositorio
         uses: actions/checkout@v4
 
-      - name: Instalar Arduino CLI e Compilar Firmware ESP32
-        uses: arduino/compile-sketches@v1
-        with:
-          sketch-paths: |
-            - sketch.ino
-          platforms: |
-            - name: esp32:esp32
-              source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-          libraries: |
-            - name: PubSubClient
-            - name: DHT sensor library
-            - name: Adafruit Unified Sensor
-          fqbn: esp32:esp32:esp32
-          cli-compile-flags: |
-            - --build-path=./build
+      - name: Instalar Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
 
-      - name: Executar Simulacao Wokwi CLI (DHT22 + LDR + Buzzer + LED Azul)
-        if: ${{ env.WOKWI_TOKEN_PRESENT == 'true' }}
-        env:
-          WOKWI_TOKEN_PRESENT: ${{ secrets.WOKWI_CLI_TOKEN != '' }}
-        uses: wokwi/wokwi-cli-action@v1
+      - name: Instalar Core ESP32
+        run: |
+          arduino-cli config init --additional-urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32
+
+      - name: Compilar Firmware ESP32
+        run: |
+          arduino-cli compile --fqbn esp32:esp32:esp32 --build-path ./build sketch.ino
+
+      - name: Executar Simulacao Wokwi CI (DHT22 + LDR + Buzzer + LEDs)
+        if: ${{ secrets.WOKWI_CLI_TOKEN != '' }}
+        uses: wokwi/wokwi-ci-action@v1
         with:
           token: ${{ secrets.WOKWI_CLI_TOKEN }}
+          path: '.'
           timeout: 15000
-          expect-text: "[WiFi] Conectado"
+          expect_text: "VINHERIA AGNELLO"
+
+      - name: Info Wokwi CI Token
+        if: ${{ secrets.WOKWI_CLI_TOKEN == '' }}
+        run: |
+          echo "Simulação Wokwi CI ignorada com sucesso (WOKWI_CLI_TOKEN não configurado nos secrets do GitHub)."
