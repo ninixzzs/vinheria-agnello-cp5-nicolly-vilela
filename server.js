@@ -15,7 +15,11 @@ const PORT = 8050;
 const ROOT_DIR = __dirname;
 
 function loadEnvCredentials() {
-  const env = { TELEGRAM_BOT_TOKEN: '', TELEGRAM_CHAT_ID: '', TELEGRAM_PHONE_ADMIN: '11981237033' };
+  const env = {
+    TELEGRAM_BOT_TOKEN: '8777267552:AAHG5UuhhjSk5Vionulj1wWuq1OWbyDzaww',
+    TELEGRAM_CHAT_ID: '-5001665013',
+    TELEGRAM_PHONE_ADMIN: '11981237033'
+  };
   const envPath = path.join(ROOT_DIR, '.env');
   if (fs.existsSync(envPath)) {
     const lines = fs.readFileSync(envPath, 'utf-8').split('\n');

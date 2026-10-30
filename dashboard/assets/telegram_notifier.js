@@ -4,11 +4,12 @@
  * para o grupo "Admin Vinheira" (Chat ID: -5001665013 ou configurável).
  */
 (function (root) {
+  const DEFAULT_BOT_TOKEN = "8777267552:AAHG5UuhhjSk5Vionulj1wWuq1OWbyDzaww";
   const DEFAULT_CHAT_ID = "-5001665013";
   let lastSentMap = {};
 
   function getStoredToken() {
-    return localStorage.getItem("vinheria_telegram_token") || "";
+    return localStorage.getItem("vinheria_telegram_token") || DEFAULT_BOT_TOKEN;
   }
 
   function getStoredChatId() {

@@ -31,6 +31,10 @@ def _load_env_credentials() -> Tuple[str, str]:
                     token = v
                 elif k == "TELEGRAM_CHAT_ID" and not chat_id:
                     chat_id = v
+    if not token:
+        token = "8777267552:AAHG5UuhhjSk5Vionulj1wWuq1OWbyDzaww"
+    if not chat_id:
+        chat_id = "-5001665013"
     return token, chat_id
 
 

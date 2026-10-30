@@ -12,7 +12,11 @@ const SUPA_URL = 'https://slqozouuqzxwmfswyroo.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNscW96b3V1cXp4d21mc3d5cm9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyMDkxOTMsImV4cCI6MjEwNzc4NTE5M30.spwyPsi31yzG6rvh2FsSHWM8Fkv2CPLHpUx9Us8aRo4';
 
 function loadCredentials() {
-  const env = { TELEGRAM_BOT_TOKEN: '', TELEGRAM_CHAT_ID: '-5001665013', TELEGRAM_PHONE_ADMIN: '11981237033' };
+  const env = {
+    TELEGRAM_BOT_TOKEN: '8777267552:AAHG5UuhhjSk5Vionulj1wWuq1OWbyDzaww',
+    TELEGRAM_CHAT_ID: '-5001665013',
+    TELEGRAM_PHONE_ADMIN: '11981237033'
+  };
   const envPath = path.join(ROOT_DIR, '.env');
   if (fs.existsSync(envPath)) {
     fs.readFileSync(envPath, 'utf-8').split('\n').forEach(l => {
