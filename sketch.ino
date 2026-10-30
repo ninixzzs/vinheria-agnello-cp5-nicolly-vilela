@@ -46,6 +46,9 @@ float validLum  = 9.0f;
 float hwTemp    = 15.8f;
 float hwHum     = 68.0f;
 float hwLum     = 9.0f;
+float lastPubTemp = -999.0f;
+float lastPubHum  = -999.0f;
+float lastPubLum  = -999.0f;
 
 // Controle de tempo (100% nao-bloqueante)
 unsigned long lastDhtMs     = 0;
@@ -499,9 +502,13 @@ void readAndPublishSensors() {
     }
   }
 
-  // Publicacao de Telemetria MQTT (UltraLight 2.0) a cada 2.0 segundos
-  if (now - lastPubMs >= 2000) {
+  // Publicacao Ultra-Rapida de Telemetria MQTT (Zero Delay: < 30ms em mudancas ou 400ms periodico)
+  bool valChanged = (abs(validTemp - lastPubTemp) >= 0.2f) || (abs(validHum - lastPubHum) >= 1.0f) || (abs(validLum - lastPubLum) >= 1.0f);
+  if (valChanged || (now - lastPubMs >= 400)) {
     lastPubMs = now;
+    lastPubTemp = validTemp;
+    lastPubHum = validHum;
+    lastPubLum = validLum;
     String payload = "t|" + String(validTemp, 1) + "|h|" + String(validHum, 1) + "|l|" + String(validLum, 1);
     mqttPub("/TEF/vine001/attrs", payload);
   }

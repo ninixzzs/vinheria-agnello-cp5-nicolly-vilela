@@ -38,26 +38,12 @@
     const verdict = (st.verdict || "OK").toString().slice(0, 3).toUpperCase();
     const tag = (st.tag || "TINTO").toString().trim().toUpperCase().slice(0, 5);
 
-    // 1. Envia comando 'diag' e 'preset' para o Wokwi e ESP32 fisico
-    const okDiag = sendPacket(
-      "/TEF/vine001/cmd",
-      `vine001@diag|${wokwiMode}|${score}|${verdict}|${tag}`
-    );
-    sendPacket(
-      "/TEF/vine001/cmd",
-      `vine001@preset|${tag}`
-    );
+    // Disparo INSTANTÂNEO (Zero Delay / < 20ms) para Wokwi e ESP32 físico
+    sendPacket("/TEF/vine001/cmd", `vine001@diag|${wokwiMode}|${score}|${verdict}|${tag}`);
+    sendPacket("/TEF/vine001/cmd", `vine001@preset|${tag}`);
+    sendPacket("/TEF/vine001/cmd", `vine001@sync|${t.toFixed(1)}|${h.toFixed(1)}|${l.toFixed(1)}`);
 
-    // 2. Envia comando 'sync' com 90ms de intervalo para evitar coalescência TCP no buffer de 256 bytes do ESP32
-    if (syncTimer) clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => {
-      sendPacket(
-        "/TEF/vine001/cmd",
-        `vine001@sync|${t.toFixed(1)}|${h.toFixed(1)}|${l.toFixed(1)}`
-      );
-    }, 90);
-
-    return okDiag;
+    return true;
   }
 
   function initMqtt(onTelemetry) {
