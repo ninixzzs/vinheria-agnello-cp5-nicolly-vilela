@@ -25,37 +25,47 @@ static const WineLimit WINE_PRESETS[8] = {
   {"LARAN", 11.0f, 14.0f, 60.0f, 72.0f, 15.0f}
 };
 
-// Localiza o preset ativo pelo nome
+// Localiza o preset ativo pelo nome (suporta tags de 4/5 letras ou nomes completos)
 inline WineLimit findWineLimit(const String& presetName) {
+  String p = presetName;
+  p.toUpperCase();
+  if (p.indexOf("ESPUMANTE") != -1) return WINE_PRESETS[3]; // BRUT
+  if (p.indexOf("SOBREMESA") != -1 || p.indexOf("COLHEITA") != -1) return WINE_PRESETS[6]; // DOCE
+  if (p.indexOf("LARANJA") != -1) return WINE_PRESETS[7]; // LARAN
   for (int i = 0; i < 8; i++) {
-    if (presetName.indexOf(WINE_PRESETS[i].key) != -1) {
+    if (p.indexOf(WINE_PRESETS[i].key) != -1) {
       return WINE_PRESETS[i];
     }
   }
-  return WINE_PRESETS[0];
+  return WINE_PRESETS[0]; // Default: TINTO
 }
 
-// Avalia desvios e determina o modo ('normal', 'padrao', 'critico') e saúde (%)
+// Avalia desvios e determina o modo ('normal', 'padrao', 'critico') e saude (%)
 inline void evaluateWineStatus(
   float temp, float hum, float lum, const String& preset,
   String& outMode, int& outHealth
 ) {
   WineLimit lim = findWineLimit(preset);
-  int deviations = 0;
+  float tDiff = (temp < lim.tMin) ? (lim.tMin - temp) : ((temp > lim.tMax) ? (temp - lim.tMax) : 0.0f);
+  float hDiff = (hum < lim.hMin) ? (lim.hMin - hum) : ((hum > lim.hMax) ? (hum - lim.hMax) : 0.0f);
+  float lDiff = (lum > lim.lMax) ? (lum - lim.lMax) : 0.0f;
 
-  if (temp < lim.tMin || temp > lim.tMax) deviations++;
-  if (hum < lim.hMin || hum > lim.hMax) deviations++;
-  if (lum > lim.lMax) deviations++;
+  int deviations = 0;
+  if (tDiff > 0.0f) deviations++;
+  if (hDiff > 0.0f) deviations++;
+  if (lDiff > 0.0f) deviations++;
 
   if (deviations == 0) {
     outMode = "normal";
     outHealth = 100;
-  } else if (deviations == 1) {
+  } else if (deviations == 1 && tDiff < 4.0f && hDiff < 12.0f && lDiff < 15.0f) {
     outMode = "padrao";
     outHealth = 85;
   } else {
     outMode = "critico";
-    outHealth = 40;
+    if (deviations == 1) outHealth = 65;       // Pouco critico (desvio unico severo)
+    else if (deviations == 2) outHealth = 45;  // Medio critico (dois parametros violados)
+    else outHealth = 25;                       // Muito critico (temperatura, umidade e luz fora)
   }
 }
 

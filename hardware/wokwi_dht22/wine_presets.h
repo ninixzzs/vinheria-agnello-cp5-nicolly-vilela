@@ -25,14 +25,19 @@ static const WineLimit WINE_PRESETS[8] = {
   {"LARAN", 11.0f, 14.0f, 60.0f, 72.0f, 15.0f}
 };
 
-// Localiza o preset ativo pelo nome
+// Localiza o preset ativo pelo nome (suporta tags de 4/5 letras ou nomes completos)
 inline WineLimit findWineLimit(const String& presetName) {
+  String p = presetName;
+  p.toUpperCase();
+  if (p.indexOf("ESPUMANTE") != -1) return WINE_PRESETS[3]; // BRUT
+  if (p.indexOf("SOBREMESA") != -1 || p.indexOf("COLHEITA") != -1) return WINE_PRESETS[6]; // DOCE
+  if (p.indexOf("LARANJA") != -1) return WINE_PRESETS[7]; // LARAN
   for (int i = 0; i < 8; i++) {
-    if (presetName.indexOf(WINE_PRESETS[i].key) != -1) {
+    if (p.indexOf(WINE_PRESETS[i].key) != -1) {
       return WINE_PRESETS[i];
     }
   }
-  return WINE_PRESETS[0];
+  return WINE_PRESETS[0]; // Default: TINTO
 }
 
 // Avalia desvios e determina o modo ('normal', 'padrao', 'critico') e saude (%)

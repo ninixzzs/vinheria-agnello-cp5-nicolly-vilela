@@ -10,12 +10,14 @@ Este documento detalha o procedimento passo a passo para montagem física em lab
 | Qtd | Componente | Especificação / Função |
 | :-: | :--- | :--- |
 | 1 | **ESP32 DevKit V1** | Microcontrolador Wi-Fi Dual-Core (30 ou 38 pinos) |
-| 1 | **Sensor DHT-11** *(ou DHT-22 no Wokwi)* | Medição de Temperatura (°C) e Umidade Relativa (%) |
-| 1 | **Sensor LDR (Fotoresistor)** | Medição de Luminosidade ambiente da adega (0 a 100%) |
-| 1 | **Resistor 10 kΩ** | Divisor de tensão para o LDR (caso não utilize módulo LDR) |
-| 1 | **Buzzer (Passivo ou Ativo)** | Emissão de alertas sonoros distintos para cada anomalia |
-| 1 | **LED Amarelo + Resistor 220 Ω** | Alerta visual de estado Padrão/Atenção (utiliza o `GPIO 2`) |
-| 1 | **Protoboard + Jumpers** | Conexões macho-macho e macho-fêmea |
+| 1 | **Sensor DHT-11** *(ou DHT-22)* | Medição de Temperatura (°C) e Umidade Relativa (%) no pino `GPIO 15` |
+| 1 | **Sensor LDR (Fotoresistor)** | Medição de Luminosidade ambiente da adega no pino `GPIO 34` |
+| 1 | **Display LCD 16x2 I2C** | Display alfanumérico (Auto-detecta endereços `0x27` e `0x3F` nos pinos SDA `GPIO 21` e SCL `GPIO 22`) |
+| 1 | **LED Verde + Resistor 220 Ω** | Indicador visual de Estado Ideal / Normal (`GPIO 5`) |
+| 1 | **LED Amarelo + Resistor 220 Ω** | Indicador visual de Atenção / Padrão (`GPIO 2`) |
+| 1 | **LED Vermelho + Resistor 220 Ω** | Indicador visual de Estado Crítico / Anomalia Térmica (`GPIO 18`) |
+| 1 | **Buzzer (Passivo ou Ativo)** | Emissão de alerta sonoro não-bloqueante no estado crítico (`GPIO 4`) |
+| 1 | **Protoboard + Jumpers Fêmea-Fêmea / Macho-Fêmea** | Conexões físicas dos sensores e atuadores aos pinos do ESP32 |
 
 ---
 
@@ -24,14 +26,22 @@ Este documento detalha o procedimento passo a passo para montagem física em lab
 | Componente | Pino do Componente | Pino no ESP32 | Observação Técnica |
 | :--- | :--- | :---: | :--- |
 | **DHT-11 / DHT-22** | `VCC` (`+`) | `3V3` | Alimentação 3.3V |
-| **DHT-11 / DHT-22** | `DATA` / `SDA` | **`GPIO 15`** (`D15`) | Sinal digital de Temperatura e Umidade |
+| **DHT-11 / DHT-22** | `DATA` / `SDA` | **`GPIO 15`** (`D15`) | Sinal digital de Temperatura e Umidade (pulso de 18ms auto-compatível) |
 | **DHT-11 / DHT-22** | `GND` (`-`) | `GND` | Terra comum |
 | **Módulo LDR** | `VCC` | `3V3` | Alimentação 3.3V |
-| **Módulo LDR** | `AO` (Saída Analógica) | **`GPIO 34`** (`D34`) | Canal `ADC1_CH6` (compatível com Wi-Fi ativo) |
+| **Módulo LDR** | `AO` (Saída Analógica) | **`GPIO 34`** (`D34`) | Canal `ADC1_CH6` (estável, sem interferência de Wi-Fi) |
 | **Módulo LDR** | `GND` | `GND` | Terra comum |
-| **LED Amarelo** | Anodo (`+`) | **`GPIO 2`** (`D2`) | Indicador de Atenção/Padrão (1 desvio nos parâmetros do vinho) |
-| **LED Amarelo** | Catodo (`-`) | `GND` | Conectado via resistor de 220 Ω |
-| **Buzzer** | Pino Positivo (`+` / `S`) | **`GPIO 4`** (`D4`) | Acionado via `tone()` com frequências por anomalia |
+| **Display LCD 16x2 I2C** | `VCC` | `VIN` ou `5V` (ou `3V3`) | Alimentação |
+| **Display LCD 16x2 I2C** | `GND` | `GND` | Terra comum |
+| **Display LCD 16x2 I2C** | `SDA` | **`GPIO 21`** (`D21`) | Dados I2C (auto-detecta `0x27` e `0x3F`) |
+| **Display LCD 16x2 I2C** | `SCL` | **`GPIO 22`** (`D22`) | Clock I2C com timeout de segurança |
+| **LED Verde** | Anodo (`+`) / Resistor | **`GPIO 5`** (`D5`) | Indica Estado Ideal (Normal) |
+| **LED Verde** | Catodo (`-`) | `GND` | Terra comum |
+| **LED Amarelo** | Anodo (`+`) / Resistor | **`GPIO 2`** (`D2`) | Indica Estado de Atenção / Padrão (1 desvio) |
+| **LED Amarelo** | Catodo (`-`) | `GND` | Terra comum |
+| **LED Vermelho** | Anodo (`+`) / Resistor | **`GPIO 18`** (`D18`) | Indica Estado Crítico (parâmetros fora da faixa) |
+| **LED Vermelho** | Catodo (`-`) | `GND` | Terra comum |
+| **Buzzer** | Pino Positivo (`+` / `S`) | **`GPIO 4`** (`D4`) | Alarme sonoro pulsante não-bloqueante no Crítico |
 | **Buzzer** | Pino Negativo (`-`) | `GND` | Terra comum |
 
 > [!IMPORTANT]
@@ -47,15 +57,14 @@ Este documento detalha o procedimento passo a passo para montagem física em lab
 
 ---
 
-### 1.4 Como Gravar no ESP32 Físico (Hands-on no Laboratório — DHT-11)
-1. Abra a **Arduino IDE 2.x** e selecione a placa **DOIT ESP32 DEVKIT V1** (ou **ESP32 Dev Module**).
-2. Em *Sketch -> Include Library -> Manage Libraries*, instale:
-   - **PubSubClient** (por Nick O'Leary)
-   - **DHT sensor library** (por Adafruit) + **Adafruit Unified Sensor**
-3. Abra o arquivo [`hardware/handson_dht11/sketch_handson_dht11.ino`](../hardware/handson_dht11/sketch_handson_dht11.ino).
-4. Configure o `WIFI_SSID`, `WIFI_PASSWORD` (rede da bancada ou roteador do celular em 2.4 GHz) e o `MQTT_BROKER` (IP do FIWARE).
-5. Conecte o ESP32 via cabo USB, selecione a porta `COM` correspondente e clique em **Upload**.
-6. Abra o **Serial Monitor** em `115200 baud` para acompanhar os pacotes `[FIWARE PUB] t|...|h|...|l|...` e os comandos `[ALERTA REMOTO]`.
+### 1.4 Como Gravar no ESP32 Físico (Hands-on de Bancada)
+1. Abra a **Arduino IDE 1.8.x ou 2.x** e selecione a placa **DOIT ESP32 DEVKIT V1** (ou **ESP32 Dev Module**).
+2. **Sem necessidade de instalar bibliotecas extras**: o [`sketch.ino`](../sketch.ino) utiliza as bibliotecas nativas do próprio Core ESP32 (`WiFi.h`, `Wire.h`, `HTTPClient.h`), compilando de primeira sem erros de dependência.
+3. Conecte o ESP32 ao computador pelo cabo micro-USB.
+4. Em *Ferramentas -> Porta*, selecione a porta serial correta (geralmente `COM3`, `COM4` ou similar, nunca `COM1`).
+5. Clique em **Carregar / Upload** (ícone de seta).
+6. ⚠️ **Dica Crítica para Evitar o Erro `Write timeout`**: Quando o console da Arduino IDE exibir `Connecting........_____`, aperte e segure o botão **BOOT** (ou `IO0`) na placa do ESP32 por 2 segundos até começar a contagem de gravação em porcentagem (`Writing at 0x... (10 %)`). Em seguida, solte o botão.
+7. Abra o **Serial Monitor** em `115200 baud`. Você verá o diagnóstico de inicialização, detecção do LCD e leituras dos sensores em tempo real. Você também pode digitar comandos diretamente no monitor serial (como `BRANCO`, `TINTO`, `ROSE`, `NORMAL`, `PADRAO`, `CRITICO`) para testar os LEDs e o Buzzer na bancada!
 
 ---
 
