@@ -56,15 +56,20 @@
 
 ## 👩‍🎓 1. Identificação Acadêmica e Requisitos Atendidos
 
-### 👥 Integrantes da Equipe & Identificação
+### 👥 Integrantes Oficiais da Turma (Avaliação CP5)
 
 | Integrante | RM | Perfil GitHub | Instituição & Curso | Responsabilidade Técnica no Projeto |
 | :--- | :---: | :---: | :--- | :--- |
-| **Ken Kobayashi** | — | [`@six01010101010101`](https://github.com/six01010101010101) | **FIAP** — *Engenharia de Software & IoT* | Arquitetura Full-Stack, Firmware C++ ESP32 ([`sketch.ino`](./sketch.ino)), Sincronismo Supabase/Telegram, Modelagem 3D, Servidor Local e SCADA |
 | **Nicolly Florencio Vilela** | **RM 573392** | [`@ninixzzs`](https://github.com/ninixzzs) | **FIAP** — *Engenharia de Software & IoT* | Programação e montagem do Arduino físico, Arquitetura IoT, Suíte de Testes TDD Pytest (31/31), Modelagem 3D do Barril de Carvalho, Integração Mecânica Tampa LCD e Endpoints REST v1 |
 | **Brenda Priscila Chalco Condori** | **RM 571971** | — | **FIAP** — *Engenharia de Software & IoT* | Apresentação do projeto, montagem dos circuitos na protoboard física, testes de bancada dos LEDs Verde/Amarelo/Vermelho e documentação executiva |
 | **Samuel Eduardo Lisboa Etcheverry** | **RM 573715** | — | **FIAP** — *Engenharia de Software & IoT* | Simulação Wokwi digital (Arduino e ESP32), diagramação do circuito elétrico (`diagram.json`), montagem do Arduino físico e testes de comunicação serial |
 | **Diego Ruﬃni Silva Jimenez** | **RM 571015** | — | **FIAP** — *Engenharia de Software & IoT* | Documentação técnica, levantamento de requisitos enológicos, parametrização dos 8 estilos de vinho e validação dos limiares térmicos |
+
+### 🤝 Colaborador & Apoio Técnico Interdisciplinar
+
+| Colaborador | Perfil GitHub | Instituição & Curso | Contribuição Técnica no Projeto |
+| :--- | :---: | :--- | :--- |
+| **Ken Kobayashi** | [`@six01010101010101`](https://github.com/six01010101010101) | **FIAP** — *Análise e Desenvolvimento de Sistemas (ADS)* | Apoio na Arquitetura Full-Stack, Firmware C++ ESP32 ([`sketch.ino`](./sketch.ino)), Sincronismo Supabase/Telegram, Modelagem 3D, Servidor Local e SCADA |
 
 ### 📋 Checklist de Critérios de Avaliação (Check Point 5)
 
@@ -714,7 +719,8 @@ Durante a concepção, desenvolvimento e integração do ecossistema enológico 
 <div align="center">
 
 **Vinheria Agnello — FIAP 2026**  
-Desenvolvido por **Ken Kobayashi** ([`@six01010101010101`](https://github.com/six01010101010101)), **Nicolly Florencio Vilela** (RM 573392), **Brenda Priscila Chalco Condori** (RM 571971), **Samuel Eduardo Lisboa Etcheverry** (RM 573715) e **Diego Ruﬃni Silva Jimenez** (RM 571015)  
+Desenvolvido por **Nicolly Florencio Vilela** (RM 573392), **Brenda Priscila Chalco Condori** (RM 571971), **Samuel Eduardo Lisboa Etcheverry** (RM 573715) e **Diego Ruﬃni Silva Jimenez** (RM 571015)  
+*Colaboração Técnica Interdisciplinar:* **Ken Kobayashi** (FIAP - ADS • [`@six01010101010101`](https://github.com/six01010101010101))  
 *Engenharia de Software • Edge Computing, IoT & Sistemas Distribuídos • Check Point 5*
 
 </div>
