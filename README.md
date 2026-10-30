@@ -19,6 +19,8 @@
 
 | Recurso Oficial | Link de Acesso | Descrição |
 | :--- | :--- | :--- |
+| **🌐 Site Oficial Online (GitHub Pages)** | [Acessar Dashboard SCADA](https://ninixzzs.github.io/vinheria-agnello-cp5-nicolly-vilela/dashboard.html) | Painel SCADA em nuvem pública sempre online (com Wokwi e Supabase) |
+| **🏺 Portal Barril 3D Online** | [Acessar Portal 3D](https://ninixzzs.github.io/vinheria-agnello-cp5-nicolly-vilela/) | Gêmeo digital 3D interativo do barril de carvalho e tampa LCD |
 | **🚀 Simulador Wokwi (Ao Vivo)** | [Abrir no Wokwi](https://wokwi.com/projects/478106752109243393) | ESP32 + DHT22 + LDR + LCD 16x2 I2C + LEDs + Buzzer D2/D4 |
 | **☁️ Deploy na Nuvem (Render)** | [Acessar no Render](https://checkpoint5-vinheria-fiware-esp32-1.onrender.com/) | Aplicação em produção em nuvem contínua |
 | **💻 Repositório GitHub Oficial (Ninix)** | [GitHub ninixzzs](https://github.com/ninixzzs/vinheria-agnello-cp5-nicolly-vilela) | Repositório oficial CP5 Nicolly Vilela sincronizado |
