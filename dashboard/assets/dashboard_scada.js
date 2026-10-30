@@ -96,6 +96,7 @@
     const ev = window.evaluateLotPreservation ? window.evaluateLotPreservation(lot, realT, realH, realL, p) : { score: 99, stateKey: "ideal" };
     setSimBase(realT, realH, realL, ev.stateKey);
     window.ScadaUIController?.syncPresetControls(p, curPr);
+    window.TelegramNotifier?.sendWineSelectionNotification?.(lot, ev, p);
     updateHardwarePlaque(sim.t, sim.h, sim.l, true, ev.stateKey === "critico" ? "critico" : "wine", ev.score, ev.stateKey);
     window.ScadaCharts?.renderAllCharts?.(sim.t, sim.h, sim.l, p, lot, true);
     renderCellarLots(); renderRealVineyards();

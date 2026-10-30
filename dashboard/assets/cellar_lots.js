@@ -137,6 +137,11 @@
         const code = card.dataset.lcode, st = card.dataset.lstyle, tr = card.dataset.terroir;
         window.curLotCode = code;
         lastClickedLotCode = code;
+        const lotObj = list.find(x => x.code === code);
+        if (lotObj) {
+          const actEv = evaluateLotPreservation(lotObj, lotObj.liveT, lotObj.liveH, lotObj.liveL, activePreset);
+          window.TelegramNotifier?.sendWineSelectionNotification?.(lotObj, actEv, activePreset);
+        }
         if (typeof handler === "function") handler(st, tr, code);
       });
     });

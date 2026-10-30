@@ -72,7 +72,7 @@ const server = http.createServer((req, res) => {
         const isPad = data.state_key === 'padrao';
         const icon = isCrit ? '🚨 *ALERTA CRÍTICO DE ADEGA*' : (isPad ? '🟡 *STATUS ENOLÓGICO PADRÃO (ATENÇÃO)*' : '🟢 *STATUS ENOLÓGICO IDEAL*');
         const ledInfo = isCrit ? '🔴 LED D18 + Buzzer D4 Apitando' : (isPad ? '🟡 LED Amarelo D2 Ativo' : '🟢 LED Verde D5 Ativo');
-        const msg = `${icon}\n━━━━━━━━━━━━━━━━━━━━━━\n🍇 *Vinheria Agnello · Admin Vinheira*\n📍 *Terroir:* ${data.terroir || 'Geral'} (${data.country || 'Mundo'})\n🍷 *Estilo:* ${(data.wine_style || 'Tinto').toUpperCase()} · Saúde: *${data.score || 100}%*\n\n🌡️ *Temperatura:* \`${data.temp}°C\`\n💧 *Umidade:* \`${data.hum}%\`\n☀️ *Luminosidade:* \`${data.lum}%\`\n📟 *Hardware Wokwi:* ${ledInfo}\n⏰ *Data:* \`${new Date().toLocaleString('pt-BR')}\`\n━━━━━━━━━━━━━━━━━━━━━━\n📲 _Grupo Admin Vinheira (${env.TELEGRAM_CHAT_ID || env.TELEGRAM_PHONE_ADMIN})_`;
+        const msg = data.text || `${icon}\n━━━━━━━━━━━━━━━━━━━━━━\n🍇 *Vinheria Agnello · Admin Vinheira*\n📍 *Terroir:* ${data.terroir || 'Geral'} (${data.country || 'Mundo'})\n🍷 *Estilo:* ${(data.wine_style || 'Tinto').toUpperCase()} · Saúde: *${data.score || 100}%*\n\n🌡️ *Temperatura:* \`${data.temp}°C\`\n💧 *Umidade:* \`${data.hum}%\`\n☀️ *Luminosidade:* \`${data.lum}%\`\n📟 *Hardware Wokwi:* ${ledInfo}\n⏰ *Data:* \`${new Date().toLocaleString('pt-BR')}\`\n━━━━━━━━━━━━━━━━━━━━━━\n📲 _Grupo Admin Vinheira (${env.TELEGRAM_CHAT_ID || env.TELEGRAM_PHONE_ADMIN})_`;
 
         if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
           const postData = JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: msg, parse_mode: 'Markdown' });
