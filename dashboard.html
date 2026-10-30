@@ -7,7 +7,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="dashboard/assets/style.css?v=20261026_v20">
+  <link rel="stylesheet" href="dashboard/assets/style.css?v=20261029_sync_v2">
+  <link rel="stylesheet" href="dashboard/assets/antigravity_layout.css?v=20261029_sync_v2">
+  <link rel="stylesheet" href="dashboard/assets/cyber-cellar.css?v=20261029_sync_v2">
+  <link rel="stylesheet" href="dashboard/assets/led-state-bar.css?v=20261029_sync_v2">
 </head>
 <body class="bg-body">
   <nav class="navbar navbar-expand-lg border-bottom sticky-top shadow-sm px-3 px-md-4 pro-navbar">
@@ -15,10 +18,11 @@
       <a class="navbar-brand d-flex align-items-center gap-2" href="#"><span class="fs-4">🍷</span><div class="d-flex flex-column"><span class="navbar-brand-title">Vinheria Agnello</span><small class="navbar-brand-sub">CARTA DA ADEGA · RESERVA DO SOMMELIER</small></div></a>
       <div class="d-flex flex-wrap align-items-center gap-2 mt-2 mt-md-0">
         <a class="status-pill status-pill-live text-decoration-none" href="https://wokwi.com/projects/478106752109243393" target="_blank"><span class="status-dot status-dot-live"></span><span>Wokwi Ao Vivo</span></a>
-        <a id="supabase-sync-pill" class="status-pill status-pill-live text-decoration-none" href="api/v1/cloud/firebase/index.html" title="Banco de Dados Supabase PostgreSQL Conectado"><span class="status-dot status-dot-live"></span><span>Supabase SQL: SYNC</span></a>
+        <a id="supabase-sync-pill" class="status-pill status-pill-live text-decoration-none" href="api/v1/cloud/supabase/index.html" target="_blank" title="Banco de Dados Supabase PostgreSQL Conectado"><span class="status-dot status-dot-live"></span><span>Supabase SQL: SYNC</span></a>
+        <button id="btn-telegram-alert" class="status-pill status-pill-live text-decoration-none border-0" style="cursor:pointer;" title="Notificar Grupo Admin Vinheira no Telegram"><span class="status-dot status-dot-live"></span><span>📲 Telegram: Admin Vinheira</span></button>
         <a href="index.html" class="nav-ghost-link">🍷 Início / Barril</a>
         <a href="api/v1/status/index.html" class="nav-ghost-link">⚡ API REST</a>
-        <a href="https://github.com/ninixzzs/vinheria-agnello-cp5-nicolly-vilela" target="_blank" class="nav-ghost-link">GitHub</a>
+        <a href="https://github.com/ninixzzs/vinheria-agnello-cp5-nicolly-vilela" target="_blank" rel="noopener noreferrer" class="nav-ghost-link">GitHub</a>
         <div class="theme-btn-group"><button id="theme-btn-light" class="btn btn-sm theme-btn" type="button">Claro</button><button id="theme-btn-dark" class="btn btn-sm theme-btn active btn-wine" type="button">Escuro</button><button id="theme-btn-system" class="btn btn-sm theme-btn" type="button">Auto</button></div>
       </div>
     </div>
@@ -48,7 +52,7 @@
                 <div class="col-sm-7 col-12"><input id="input-wine-search" type="search" class="form-control trigger-input-field" placeholder="🔍 Pesquisar vinho, vinícola ou casta..." list="wine-search-list"></div>
                 <div class="col-sm-5 col-12"><select id="dropdown-wine-preset" class="form-select trigger-input-field"><option value="tinto">🍷 Vinho Tinto</option><option value="branco">🥂 Vinho Branco</option><option value="rose">🌸 Vinho Rosé</option><option value="espumante">🍾 Espumante Brut</option><option value="pinot">🍒 Pinot Noir</option><option value="porto">🏺 Vinho do Porto</option><option value="sobremesa">🍯 Colheita Tardia</option><option value="laranja">🍊 Vinho Laranja</option></select></div>
               </div>
-              <datalist id="wine-search-list"><option value="Vinho Tinto"><option value="Vinho Branco"><option value="Vinho Rosé"><option value="Espumante Brut"><option value="Pinot Noir"><option value="Vinho do Porto"><option value="Colheita Tardia"><option value="Vinho Laranja"><option value="Château Margaux"><option value="Domaine Romanée-Conti"><option value="Taylor's Vintage Port"><option value="Château d'Yquem"><option value="Vega Sicilia"><option value="Cloudy Bay"></datalist>
+              <datalist id="wine-search-list"><option value="Vinho Tinto"><option value="Vinho Branco"><option value="Vinho Rosé"><option value="Espumante Brut"><option value="Pinot Noir"><option value="Vinho do Porto"><option value="Colheita Tardia"><option value="Vinho Laranja"><option value="Château Margaux"><option value="Marchesi Antinori"><option value="Vinícola Miolo"><option value="Cloudy Bay"><option value="Joh. Jos. Prüm"><option value="Mission Hill Estate"><option value="Grace Wine (Fuji)"><option value="Chateau Montelena"><option value="Vega Sicilia"><option value="Concha y Toro"><option value="Penfolds Magill"><option value="Kanonkop Estate"><option value="Catena Zapata"><option value="Domaine Ott"><option value="Abrau-Durso"><option value="Domaine Romanée-Conti"><option value="Taylor's Port"><option value="Château d'Yquem"><option value="Josko Gravner"><option value="Chardonnay"><option value="Sauvignon Blanc"><option value="Riesling"><option value="Cabernet Sauvignon"></datalist>
               <div id="wine-style-pills" class="mb-2"><button type="button" class="btn wine-pill-btn active" data-wine="tinto">🍷 Tinto</button><button type="button" class="btn wine-pill-btn" data-wine="branco">🥂 Branco</button><button type="button" class="btn wine-pill-btn" data-wine="rose">🌸 Rosé</button><button type="button" class="btn wine-pill-btn" data-wine="espumante">🍾 Brut</button><button type="button" class="btn wine-pill-btn" data-wine="pinot">🍒 Pinot</button><button type="button" class="btn wine-pill-btn" data-wine="porto">🏺 Porto</button><button type="button" class="btn wine-pill-btn" data-wine="sobremesa">🍯 Colheita</button><button type="button" class="btn wine-pill-btn" data-wine="laranja">🍊 Laranja</button></div>
             </div>
             <div id="preset-description-text" class="small text-muted pt-2 border-top border-secondary border-opacity-25" style="font-size:0.73rem;">Maturação de tintos encorpados (14–18°C | 60–75% UR): evolução nobre.</div>
@@ -57,7 +61,7 @@
         <div class="col-xl-3 col-lg-6 col-12">
           <div class="control-field-box">
             <div>
-              <label class="small mb-2 d-flex justify-content-between align-items-center"><span class="fw-bold text-wine">🌍 Área &amp; Terroir Global</span><span class="sommelier-tag">12 ESTAÇÕES</span></label>
+              <label class="small mb-2 d-flex justify-content-between align-items-center"><span class="fw-bold text-wine">🌍 Área &amp; Terroir Global</span><span class="sommelier-tag">15 ESTAÇÕES</span></label>
               <select id="dropdown-area-terroir" class="form-select trigger-input-field mb-2">
                 <option value="fr_margaux">🇫🇷 França — Médoc, Bordeaux</option><option value="it_antinori">🇮🇹 Itália — Toscana (Chianti)</option>
                 <option value="cl_concha">🇨🇱 Chile — Vale do Maipo</option><option value="ru_abrau">🇷🇺 Rússia — Abrau-Durso (Mar Negro)</option>
@@ -65,6 +69,8 @@
                 <option value="de_prum">🇩🇪 Alemanha — Vale do Mosel</option><option value="es_vega">🇪🇸 Espanha — Ribera del Duero</option>
                 <option value="nz_cloudy">🇳🇿 Nova Zelândia — Marlborough</option><option value="za_kanonkop">🇿🇦 África do Sul — Stellenbosch</option>
                 <option value="br_miolo">🇧🇷 Brasil — Vale dos Vinhedos (RS)</option><option value="ar_catena">🇦🇷 Argentina — Mendoza (Andes)</option>
+                <option value="ca_okanagan">🇨🇦 Canadá — Okanagan Valley</option><option value="au_barossa">🇦🇺 Austrália — Barossa Valley</option>
+                <option value="jp_koshu">🇯🇵 Japão — Vale de Koshu (Yamanashi)</option>
                 <option value="wokwi_esp32">📟 Simulador ESP32 Wokwi (:1883)</option>
               </select>
             </div>
@@ -96,10 +102,10 @@
             </div>
             <div class="d-flex align-items-center justify-content-center gap-3 my-auto">
               <div class="barrel-lid-mini">
-                <img src="dashboard/assets/icons/tampa_barril_lcd.png" class="barrel-lid-mini-img" alt="Tampa com LCD">
+                <img src="dashboard/assets/icons/tampa_barril_lcd.png" class="barrel-lid-mini-img" alt="Tampa com LCD" loading="lazy" decoding="async">
                 <div class="barrel-lcd-mini-slot"><div id="barrel-mini-t1" class="barrel-lcd-mini-text">T:15.2°C U:71%</div><div id="barrel-mini-t2" class="barrel-lcd-mini-text">TINTO 1UP:100%</div></div>
               </div>
-              <img src="dashboard/assets/icons/corpo_barril_3d.png" class="barrel-3d-mini-img" alt="Barril de Carvalho 225L">
+              <img src="dashboard/assets/icons/corpo_barril_3d.png" class="barrel-3d-mini-img" alt="Barril de Carvalho 225L" loading="lazy" decoding="async">
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-1 mt-2 pt-2 border-top border-secondary border-opacity-25">
               <span class="badge bg-black bg-opacity-50 text-secondary border border-secondary border-opacity-25 font-monospace" style="font-size:0.60rem;">I2C: 0x27</span>
@@ -127,25 +133,25 @@
         </div>
         <div class="col-lg-4 col-md-12">
           <div class="proto-thumb-box h-100 d-flex flex-column justify-content-between p-3">
-            <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom border-secondary border-opacity-25 w-100">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2 pb-2 border-bottom border-secondary border-opacity-25 w-100">
               <span class="sommelier-tag" style="font-size:0.64rem;">🕹️ PAINEL LED &amp; COMANDOS WOKWI</span>
               <span id="mqtt-cmd-badge" class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 font-monospace" style="font-size:0.60rem;"><span class="status-dot"></span>MQTT /cmd: NORMAL</span>
             </div>
-            <div class="d-grid grid-3-states gap-1 mb-2">
-              <div id="led-state-ideal" class="led-state-pill active-ideal" style="cursor:pointer;" title="Faixa 95% a 100% do vinho">🟢 IDEAL (95–100%)</div>
-              <div id="led-state-padrao" class="led-state-pill" style="cursor:pointer;" title="Faixa dos 75% a 94% do vinho">🔵 PADRÃO (~75%)</div>
-              <div id="led-state-critico" class="led-state-pill" style="cursor:pointer;" title="Abaixo de 75% · Dispara Apito Vermelho">🔴 CRÍTICO (Apito)</div>
+            <div class="grid-3-states mb-2" role="group" aria-label="Estado atual do vinho">
+              <div id="led-state-ideal" class="led-state-pill active-ideal" role="button" tabindex="0" aria-pressed="true" title="Faixa 95% a 100% do vinho"><span class="led-state-name">🟢 IDEAL</span><span class="led-state-range">95–100%</span></div>
+              <div id="led-state-padrao" class="led-state-pill" role="button" tabindex="0" aria-pressed="false" title="Faixa dos 75% a 94% do vinho"><span class="led-state-name">🟡 PADRÃO</span><span class="led-state-range">75–94%</span></div>
+              <div id="led-state-critico" class="led-state-pill" role="button" tabindex="0" aria-pressed="false" title="Abaixo de 75% · Dispara Apito Vermelho"><span class="led-state-name">🔴 CRÍTICO</span><span class="led-state-range">&lt;75% · Apito</span></div>
             </div>
-            <div class="d-grid grid-3-states gap-1 my-1">
+            <div class="grid-3-states my-1">
               <button class="btn btn-sm btn-outline-success sc-btn active" data-sc="normal" title="Equilíbrio Ideal (95% a 100% do vinho)">🟢 Ideal</button>
-              <button class="btn btn-sm btn-outline-info sc-btn" data-sc="padrao" title="Estado Padrão (Faixa de 75% do vinho)">🔵 Padrão</button>
+              <button class="btn btn-sm btn-outline-warning sc-btn" data-sc="padrao" title="Estado Padrão (Faixa de 75% a 94% do vinho)">🟡 Padrão</button>
               <button class="btn btn-sm btn-outline-danger sc-btn" data-sc="multi" title="Estado Crítico (<75% · Solta Apito Vermelho)">🔴 Crítico</button>
             </div>
-            <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25 mt-auto">
-              <div class="d-flex align-items-center gap-1"><span id="led-green" class="led-indicator led-green-on"></span><small id="led-green-lbl" class="text-secondary font-monospace" style="font-size:0.67rem;">D5: IDEAL</small></div>
-              <div class="d-flex align-items-center gap-1"><span id="led-blue" class="led-indicator led-blue-off"></span><small id="led-blue-lbl" class="text-secondary font-monospace" style="font-size:0.67rem;">D2: OFF</small></div>
-              <div class="d-flex align-items-center gap-1"><span id="led-red" class="led-indicator led-red-off"></span><small id="led-red-lbl" class="text-secondary font-monospace" style="font-size:0.67rem;">D18: OFF</small></div>
-              <div class="d-flex align-items-center gap-1"><span id="buzzer-status-icon" style="font-size:0.75rem;">🔇</span><small id="buzzer-status-text" class="text-secondary font-monospace" style="font-size:0.67rem;">D4 Mudo</small></div>
+            <div class="led-hw-status pt-2 border-top border-secondary border-opacity-25 mt-auto">
+              <div class="d-flex align-items-center gap-1"><span id="led-green" class="led-indicator led-green-on"></span><small id="led-green-lbl" class="text-secondary font-monospace" style="font-size:0.67rem;">D5: VERDE (OK / PADRÃO)</small></div>
+              <div class="d-flex align-items-center gap-1"><span id="led-yellow" class="led-indicator led-yellow-off"></span><small id="led-yellow-lbl" class="text-secondary font-monospace" style="font-size:0.67rem;">D2: BUZZER INCÊNDIO</small></div>
+              <div class="d-flex align-items-center gap-1"><span id="led-red" class="led-indicator led-red-off"></span><small id="led-red-lbl" class="text-secondary font-monospace" style="font-size:0.67rem;">D18: VERMELHO (CRÍTICO)</small></div>
+              <div class="d-flex align-items-center gap-1"><span id="buzzer-status-icon" style="font-size:0.75rem;">🔇</span><small id="buzzer-status-text" class="text-secondary font-monospace" style="font-size:0.67rem;">D2/D4 Mudo</small></div>
             </div>
           </div>
         </div>
@@ -185,15 +191,35 @@
   </main>
   <footer class="text-center text-muted small py-3 border-top mt-4" style="font-size:0.74rem;"><div class="mb-2">Check Point 5 — Vinheria Agnello • FIWARE STH-Comet (:8666) &amp; IoT Agent (:4041) • ESP32 Wokwi MQTT (:1883) • Firebase &amp; Supabase • Render.com</div></footer>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
-  <script src="dashboard/assets/arcade_audio.js?v=20261026_v20"></script>
-  <script src="dashboard/assets/wine_catalog.js?v=20261026_v20"></script>
-  <script src="dashboard/assets/cellar_lots.js?v=20261026_v20"></script>
-  <script src="dashboard/assets/ecosystem.js?v=20261026_v20"></script>
-  <script src="dashboard/assets/theme.js?v=20261026_v20"></script>
-  <script src="dashboard/assets/satellite_terroirs.js?v=20261026_v20"></script>
-  <script src="dashboard/assets/wokwi_lcd.js?v=20261026_v20"></script>
-  <script src="dashboard/assets/scada_mqtt.js?v=20261026_v20"></script>
-  <script src="dashboard/assets/scada_charts.js?v=20261026_v20"></script>
-  <script src="dashboard/assets/dashboard_scada.js?v=20261026_v20"></script>
+  <script src="dashboard/assets/arcade_audio.js?v=20261029_sync_v2"></script>
+  <script src="dashboard/assets/wine_catalog.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/supabase_client.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/cellar_lots.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/ecosystem.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/theme.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/satellite_terroirs.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/wokwi_lcd.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/scada_mqtt.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/telegram_notifier.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/scada_charts.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/scada_dispatcher.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/scada_ui_controller.js?v=20261029_styles_v3"></script>
+  <script src="dashboard/assets/dashboard_scada.js?v=20261029_styles_v3"></script>
+  <script>
+    document.getElementById("btn-telegram-alert")?.addEventListener("click", () => {
+      const tr = (window.TERROIRS && window.TERROIRS[window.curArea || "fr_margaux"]) || { name: "Adega Central", country: "Brasil" };
+      window.TelegramNotifier?.sendTelegramAlert({
+        terroir: tr.name, country: tr.country,
+        temp: (typeof window.simT === "number" ? window.simT : (tr.satT || 15.8)),
+        hum: (typeof window.simH === "number" ? window.simH : (tr.satH || 68)),
+        lum: (typeof window.simL === "number" ? window.simL : (tr.satL || 9)),
+        stateKey: window.curScadaMode || "critico",
+        score: window.curHealthScore || 45,
+        style: window.curPr || "tinto",
+        force: true,
+        details: "Teste manual disparado pelo operador no Dashboard SCADA"
+      });
+    });
+  </script>
 </body>
 </html>

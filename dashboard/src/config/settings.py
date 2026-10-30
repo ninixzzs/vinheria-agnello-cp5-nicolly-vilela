@@ -46,35 +46,35 @@ CMD_HUM_ALERT: str = "hum"
 CMD_LUM_ALERT: str = "lum"
 CMD_MULTI_ALERT: str = "multi"
 
-# Descrições detalhadas do padrão sonoro do Buzzer e LED Azul para cada estado
+# Descrições detalhadas do padrão sonoro do Buzzer e LEDs (Verde, Amarelo e Vermelho)
 ANOMALY_SOUND_DESCRIPTIONS: Dict[str, Dict[str, str]] = {
     CMD_NORMAL: {
-        "label": "Parâmetros Normais",
-        "led": "LED Azul DESLIGADO",
+        "label": "Parâmetros Normais (Ideal)",
+        "led": "LED Verde ON (Amarelo/Vermelho OFF)",
         "buzzer": "Buzzer Silenciado (0 Hz)",
         "color": "success",
     },
     CMD_TEMP_ALERT: {
         "label": "Anomalia de Temperatura",
-        "led": "LED Azul PISCANDO (Remoto Ativo)",
+        "led": "LED Amarelo PISCANDO (Atenção / Desvio)",
         "buzzer": "Alerta Sonoro Tipo 1: Bips Agudos Rápidos (2000 Hz)",
-        "color": "danger",
+        "color": "warning",
     },
     CMD_HUM_ALERT: {
         "label": "Anomalia de Umidade",
-        "led": "LED Azul PISCANDO (Remoto Ativo)",
+        "led": "LED Amarelo PISCANDO (Atenção / Desvio)",
         "buzzer": "Alerta Sonoro Tipo 2: Pulsos Graves Duplos (850 Hz)",
         "color": "warning",
     },
     CMD_LUM_ALERT: {
         "label": "Anomalia de Luminosidade",
-        "led": "LED Azul PISCANDO (Remoto Ativo)",
+        "led": "LED Amarelo PISCANDO (Atenção / Desvio)",
         "buzzer": "Alerta Sonoro Tipo 3: Sirene Alternada (1200 Hz / 1700 Hz)",
         "color": "info",
     },
     CMD_MULTI_ALERT: {
         "label": "Anomalia Múltipla Crítica",
-        "led": "LED Azul PISCANDO RÁPIDO (Remoto Ativo)",
+        "led": "LED Vermelho PISCANDO RÁPIDO (Crítico Ativo)",
         "buzzer": "Alerta Sonoro Tipo 4: Escala Tripla de Emergência (1000/1800/2500 Hz)",
         "color": "danger",
     },

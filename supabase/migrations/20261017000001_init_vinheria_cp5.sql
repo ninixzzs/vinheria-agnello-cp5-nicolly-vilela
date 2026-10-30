@@ -2,7 +2,7 @@
 -- CHECK POINT 5 - MONITORAMENTO GLOBAL DE VINHERIAS (SUPABASE POSTGRESQL)
 -- Migration Completa: vine_devices, vine_trigger_configs, vine_telemetry,
 --                     real_vineyards_status, cellar_lots + View + Seeds
--- Repositório GitHub: https://github.com/ninixzzs/vinheria-agnello-cp5-nicolly-vilela
+-- Repositório GitHub: https://github.com/six01010101010101/vinheria-fiware-esp32
 -- =============================================================================
 
 CREATE TABLE IF NOT EXISTS public.vine_devices (

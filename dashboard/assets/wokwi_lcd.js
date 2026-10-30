@@ -2,17 +2,17 @@
 (function (root) {
   function calcHealthScore(t, h, l, pr) {
     const p = pr || { tMin: 14, tMax: 18, hMin: 60, hMax: 75, lMin: 0, lMax: 25 };
+    const tMid = (p.tMin + p.tMax) / 2, tHalf = Math.max(1, (p.tMax - p.tMin) / 2);
+    const hMid = (p.hMin + p.hMax) / 2, hHalf = Math.max(1, (p.hMax - p.hMin) / 2);
     let pen = 0;
-    if (t < p.tMin) pen += (p.tMin - t) * 7.5;
-    else if (t > p.tMax) pen += (t - p.tMax) * 7.5;
-    if (h < p.hMin) pen += (p.hMin - h) * 1.6;
-    else if (h > p.hMax) pen += (h - p.hMax) * 1.6;
-    if (l > p.lMax) pen += (l - p.lMax) * 1.3;
-    if (pen > 0) return Math.max(15, Math.min(94, Math.round(100 - pen)));
-    const tMid = (p.tMin + p.tMax) / 2, hMid = (p.hMin + p.hMax) / 2;
-    const edge = (Math.abs(t - tMid) / Math.max(1, (p.tMax - p.tMin) / 2)) * 2.5 +
-                 (Math.abs(h - hMid) / Math.max(1, (p.hMax - p.hMin) / 2)) * 1.8;
-    return Math.max(95, Math.min(100, Math.round(100 - edge)));
+    if (t < p.tMin) pen += (p.tMin - t) * 8.5;
+    else if (t > p.tMax) pen += (t - p.tMax) * 8.5;
+    if (h < p.hMin) pen += (p.hMin - h) * 1.5;
+    else if (h > p.hMax) pen += (h - p.hMax) * 1.5;
+    if (l > p.lMax) pen += (l - p.lMax) * 1.0;
+    const tEdge = Math.abs(t - tMid) / tHalf, hEdge = Math.abs(h - hMid) / hHalf;
+    const edgePen = Math.max(0, (tEdge - 0.5) * 10.0) + Math.max(0, (hEdge - 0.6) * 5.0);
+    return Math.max(9, Math.min(100, Math.round(100 - pen - edgePen)));
   }
 
   function evalStatus(t, h, l, pr, isWokwi) {
@@ -37,18 +37,12 @@
   function renderWokwiTwin(opts) {
     const { t = 15.8, h = 68, l = 9, preset = {}, terroir = {}, lot = null, isWokwi = true, mode = "normal" } = opts || {};
     const st = evalStatus(t, h, l, preset, isWokwi);
-    let score = st.score;
-    let stateKey = st.stateKey;
-    if (mode === "multi" || mode === "critico") {
-      stateKey = "critico"; score = Math.min(score, 62);
-    } else if (mode === "padrao") {
-      stateKey = "padrao"; if (score >= 95 || score < 75) score = 78;
-    } else if (mode === "normal" && score >= 95) {
-      stateKey = "ideal";
-    }
-    const isCrit = stateKey === "critico";
-    const isIdeal = stateKey === "ideal";
-    const isPadrao = stateKey === "padrao";
+    let score = opts.score !== undefined ? opts.score : st.score;
+    let stateKey = opts.stateKey || (score < 75 ? "critico" : (score < 95 ? "padrao" : "ideal"));
+    const isCrit = stateKey === "critico" || score < 75;
+    const isIdeal = stateKey === "ideal" || score >= 95;
+    const isPadrao = !isCrit && !isIdeal;
+    stateKey = isCrit ? "critico" : (isIdeal ? "ideal" : "padrao");
 
     const prTag = (function () {
       const nm = ((preset.key || "") + " " + (preset.name || "")).toLowerCase();
@@ -84,41 +78,41 @@
 
     const crtStatus = document.getElementById("crt-status-val");
     if (crtStatus) {
-      crtStatus.textContent = isIdeal ? `🟢 IDEAL (95–100%: ${score}%)` : (isCrit ? `🔴 CRÍTICO (<75%: ${score}% · APITO)` : `🔵 PADRÃO (Faixa 75%: ${score}%)`);
-      crtStatus.className = isIdeal ? "text-success fw-bold" : (isCrit ? "text-danger fw-bold" : "text-info fw-bold");
+      crtStatus.textContent = isIdeal ? `🟢 IDEAL (95–100%: ${score}%)` : (isCrit ? `🔴 CRÍTICO (<75%: ${score}% · APITO)` : `🟡 PADRÃO (Faixa 75–94%: ${score}%)`);
+      crtStatus.className = isIdeal ? "text-success fw-bold" : (isCrit ? "text-danger fw-bold" : "text-warning fw-bold");
     }
 
     const crtTag = document.getElementById("crt-status-tag") || document.getElementById("crt-status-pill");
     if (crtTag) {
-      crtTag.textContent = isIdeal ? "STATUS: 🟢 IDEAL (95–100%)" : (isCrit ? "STATUS: 🔴 CRÍTICO (APITO)" : "STATUS: 🔵 PADRÃO (~75%)");
-      crtTag.style.color = isIdeal ? "#4ade80" : (isCrit ? "#f87171" : "#38bdf8");
+      crtTag.textContent = isIdeal ? "STATUS: 🟢 IDEAL (95–100%)" : (isCrit ? "STATUS: 🔴 CRÍTICO (APITO)" : "STATUS: 🟡 PADRÃO (75–94%)");
+      crtTag.style.color = isIdeal ? "#4ade80" : (isCrit ? "#f87171" : "#eab308");
     }
 
     const crtApogee = document.getElementById("crt-apogee-val");
     if (crtApogee) {
       crtApogee.textContent = `${score}% [${isIdeal ? "IDEAL 95–100%" : (isCrit ? "CRÍTICO <75%" : "PADRÃO 75–94%")}]`;
-      crtApogee.className = isIdeal ? "text-success fw-bold" : (isCrit ? "text-danger fw-bold" : "text-info fw-bold");
+      crtApogee.className = isIdeal ? "text-success fw-bold" : (isCrit ? "text-danger fw-bold" : "text-warning fw-bold");
     }
 
-    const stIdealEl = document.getElementById("led-state-ideal");
-    const stPadraoEl = document.getElementById("led-state-padrao");
-    const stCritEl = document.getElementById("led-state-critico");
-    if (stIdealEl) stIdealEl.className = `led-state-pill ${isIdeal ? "active-ideal" : ""}`;
-    if (stPadraoEl) stPadraoEl.className = `led-state-pill ${isPadrao ? "active-padrao" : ""}`;
-    if (stCritEl) stCritEl.className = `led-state-pill ${isCrit ? "active-critico" : ""}`;
+    [["led-state-ideal", isIdeal, "active-ideal"], ["led-state-padrao", isPadrao, "active-padrao"], ["led-state-critico", isCrit, "active-critico"]].forEach(([elId, on, activeCls]) => {
+      const pill = document.getElementById(elId);
+      if (!pill) return;
+      pill.className = on ? `led-state-pill ${activeCls}` : "led-state-pill";
+      pill.setAttribute("aria-pressed", String(on));
+    });
 
-    const ledG = document.getElementById("led-green"), ledR = document.getElementById("led-red"), ledB = document.getElementById("led-blue");
-    const lblG = document.getElementById("led-green-lbl"), lblR = document.getElementById("led-red-lbl"), lblB = document.getElementById("led-blue-lbl");
-    if (ledG) ledG.className = isIdeal ? "led-indicator led-green-on" : "led-indicator led-green-off";
-    if (lblG) lblG.textContent = isIdeal ? "D5: IDEAL" : "D5: OFF";
-    if (ledB) ledB.className = isPadrao ? "led-indicator led-blue-blinking" : "led-indicator led-blue-off";
-    if (lblB) lblB.textContent = isPadrao ? "D2: PADRÃO" : "D2: OFF";
-    if (ledR) ledR.className = isCrit ? "led-indicator led-red-on led-red-blinking" : "led-indicator led-red-off";
-    if (lblR) lblR.textContent = isCrit ? "D18: CRÍTICO!" : "D18: OFF";
+    const ledG = document.getElementById("led-green"), ledR = document.getElementById("led-red"), ledB = document.getElementById("led-yellow") || document.getElementById("led-blue");
+    const lblG = document.getElementById("led-green-lbl"), lblR = document.getElementById("led-red-lbl"), lblB = document.getElementById("led-yellow-lbl") || document.getElementById("led-blue-lbl");
+    if (ledG) ledG.className = !isCrit ? "led-indicator led-green-on" : "led-indicator led-green-off";
+    if (lblG) lblG.textContent = !isCrit ? "D5: OK (PADRÃO)" : "D5: OFF";
+    if (ledB) ledB.className = isCrit ? "led-indicator led-yellow-on led-yellow-blinking" : "led-indicator led-yellow-off";
+    if (lblB) lblB.textContent = isCrit ? "D2: BUZZER INCÊNDIO" : "D2: MUDO";
+    if (ledR) ledR.className = isCrit ? "led-indicator led-red-on" : "led-indicator led-red-off";
+    if (lblR) lblR.textContent = isCrit ? "D18: CRÍTICO (ACESO)" : "D18: OFF";
 
     const bzIcon = document.getElementById("buzzer-status-icon"), bzTxt = document.getElementById("buzzer-status-text");
     if (bzIcon) bzIcon.textContent = isCrit ? "🚨" : "🔇";
-    if (bzTxt) bzTxt.textContent = isCrit ? "D4 APITANDO!" : "D4 Mudo";
+    if (bzTxt) bzTxt.textContent = isCrit ? "D2/D4 SIRENE ATIVA" : "D2/D4 Mudo";
 
     return { score, st: { ...st, ok: !isCrit }, stateKey, l1Text, l2Text, prTag, wineTitle, terroirTitle };
   }

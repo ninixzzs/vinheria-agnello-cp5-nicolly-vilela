@@ -31,8 +31,9 @@
     const t = typeof st.t === "number" ? st.t : 15.8;
     const h = typeof st.h === "number" ? st.h : 68.0;
     const l = typeof st.l === "number" ? st.l : 9.0;
-    // No Wokwi #478106752109243393, curPreset só aparece no LCD quando curMode == "normal"
-    const wokwiMode = (st.stateKey === "critico" || st.cmd === "multi") ? "multi" : "normal";
+    const wokwiMode = (st.stateKey === "critico" || st.cmd === "multi" || st.cmd === "critico")
+      ? "critico"
+      : ((st.stateKey === "padrao" || st.cmd === "padrao") ? "padrao" : "normal");
     const score = typeof st.score === "number" ? Math.round(st.score) : 100;
     const verdict = (st.verdict || "OK").toString().slice(0, 3).toUpperCase();
     const tag = (st.tag || "TINTO").toString().trim().toUpperCase().slice(0, 5);
@@ -77,11 +78,9 @@
         const topic = m.destinationName || "";
         const raw = m.payloadString || "";
         if (topic.endsWith("/cmdexe")) {
-          const bge = document.getElementById("mqtt-cmd-badge");
-          if (bge && lastState) {
-            const stLbl = (lastState.stateKey || lastState.cmd || "IDEAL").toUpperCase();
+          if (lastState) {
             const tgLbl = (lastState.tag || "TINTO").toUpperCase();
-            bge.innerHTML = `<span class="status-dot"></span>WOKWI SINCRONIZADO: ${stLbl} (${tgLbl})`;
+            window.ScadaUIController?.renderCommandBadge(lastState.stateKey, "WOKWI SINCRONIZADO", ` (${tgLbl})`);
           }
           return;
         }
@@ -137,17 +136,18 @@
     }
   }
 
-  window.addEventListener("storage", (e) => {
-    if (e.key === "vinheria_scada_state" && e.newValue) {
-      try {
-        lastState = JSON.parse(e.newValue);
-      } catch (_) {}
-    }
-  });
+  if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+    window.addEventListener("storage", (e) => {
+      if (e.key === "vinheria_scada_state" && e.newValue) {
+        try {
+          lastState = JSON.parse(e.newValue);
+        } catch (_) {}
+      }
+    });
+  }
 
-  // Keepalive a cada 2.0s apenas na aba visível para manter o Wokwi sincronizado com o vinho ativo
+  // Keepalive a cada 2.0s para manter o Wokwi sincronizado 100% com o site (mesmo em aba de fundo)
   setInterval(() => {
-    if (document.hidden) return;
     if (lastState && pahoClient && pahoClient.isConnected()) {
       flushState(lastState);
     }

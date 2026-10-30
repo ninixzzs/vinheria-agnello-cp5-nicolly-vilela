@@ -96,10 +96,10 @@
     document.getElementById('lcd-line-0').textContent = `T:${p.t.toFixed(1)}C  U:${p.h.toFixed(0)}% *`;
     document.getElementById('lcd-line-1').textContent = `L:${p.l.toFixed(0)}%  ${p.label}`;
     updateBarrelMini(p.t, p.h, p.score, p.ok ? 'OK' : 'ALR');
-    const ledG = document.getElementById('led-green-ui'), ledR = document.getElementById('led-red-ui'), ledB = document.getElementById('led-blue-ui');
+    const ledG = document.getElementById('led-green-ui'), ledR = document.getElementById('led-red-ui'), ledB = document.getElementById('led-yellow-ui') || document.getElementById('led-blue-ui');
     if (ledG) ledG.className = p.ok ? 'led-indicator led-green-on' : 'led-indicator led-green-off';
     if (ledR) ledR.className = p.ok ? 'led-indicator led-red-off' : 'led-indicator led-red-on';
-    if (ledB) ledB.className = p.ok ? 'led-indicator led-blue-off' : 'led-indicator led-blue-blinking';
+    if (ledB) ledB.className = p.ok ? 'led-indicator led-yellow-off' : 'led-indicator led-yellow-on led-yellow-blinking';
     document.querySelectorAll('.scenario-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-scenario') === type));
     if (typeof playAcousticChime === 'function') playAcousticChime(p.freq, 0.22);
     updateCharts(p.t, p.h, p.l);
