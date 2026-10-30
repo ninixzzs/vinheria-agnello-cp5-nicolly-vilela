@@ -60,7 +60,7 @@
 
 | Integrante | RM | Perfil GitHub | Instituição & Curso | Responsabilidade Técnica no Projeto |
 | :--- | :---: | :---: | :--- | :--- |
-| **Ken Kobayashi** | — | [`@six01010101010101`](https://github.com/six01010101010101) | **FIAP** — *Engenharia de Software & IoT* | Arquitetura Full-Stack, Firmware C++ ESP32 ([`sketch.ino`](./sketch.ino)), Sincronismo Supabase/Telegram, Modelagem 3D, Servidor Local e SCADA |
+| **Ken Kobayashi** | — | [`@six01010101010101`](https://github.com/six01010101010101) | **FIAP** — *ADS & IoT* | Arquitetura Full-Stack, Firmware C++ ESP32 ([`sketch.ino`](./sketch.ino)), Sincronismo Supabase/Telegram, Modelagem 3D, Servidor Local e SCADA |
 | **Nicolly Florencio Vilela** | **RM 573392** | [`@ninixzzs`](https://github.com/ninixzzs) | **FIAP** — *Engenharia de Software & IoT* | Programação e montagem do Arduino físico, Arquitetura IoT, Suíte de Testes TDD Pytest (31/31), Modelagem 3D do Barril de Carvalho, Integração Mecânica Tampa LCD e Endpoints REST v1 |
 | **Brenda Priscila Chalco Condori** | **RM 571971** | — | **FIAP** — *Engenharia de Software & IoT* | Apresentação do projeto, montagem dos circuitos na protoboard física, testes de bancada dos LEDs Verde/Amarelo/Vermelho e documentação executiva |
 | **Samuel Eduardo Lisboa Etcheverry** | **RM 573715** | — | **FIAP** — *Engenharia de Software & IoT* | Simulação Wokwi digital (Arduino e ESP32), diagramação do circuito elétrico (`diagram.json`), montagem do Arduino físico e testes de comunicação serial |
